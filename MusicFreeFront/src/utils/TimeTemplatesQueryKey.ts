@@ -1,0 +1,8 @@
+
+
+
+const TimeTemplatesQueryKey = {
+all: "",
+
+
+}

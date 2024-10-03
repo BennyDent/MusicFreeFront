@@ -1,0 +1,46 @@
+{
+  "name": "my-vue-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.16.1",
+    "@tanstack/react-query": "^5.51.15",
+    "@tanstack/react-router": "^1.43.12",
+    "@types/react-custom-scroll": "^5.0.3",
+    "@vitejs/plugin-react": "^4.3.1",
+    "axios": "^1.7.4",
+    "bootstrap": "^5.3.3",
+    "dayjs": "^1.11.12",
+    "graphql": "^16.9.0",
+    "graphql-request": "^7.1.0",
+    "graphql-ws": "^5.16.0",
+    "material": "^0.9.13",
+    "react": "^18.3.1",
+    "react-bootstrap": "^2.10.4",
+    "react-custom-scroll": "^7.0.0",
+    "react-dom": "^18.3.1",
+    "react-h5-audio-player": "^3.9.3",
+    "react-hook-form": "^7.52.1",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-select": "^5.8.0",
+    "react-uploader": "^3.43.0",
+    "urql": "^4.1.0",
+    "vue": "^3.4.29",
+    "zustand": "^5.0.0-rc.2"
+  },
+  "devDependencies": {
+    "@tanstack/router-devtools": "^1.43.12",
+    "@tanstack/router-plugin": "^1.43.12",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "vite": "^5.3.3"
+  }
+}
