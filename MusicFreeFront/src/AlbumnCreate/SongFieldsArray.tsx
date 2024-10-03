@@ -32,7 +32,14 @@ function handleEdit(index: number){
                     var value_copy = value;
                     value_copy.push(song);
                     onChange(value_copy);}}/>:
-                <SongField file={value[index!].file} name={value[index!].name} index={value[index!].index} authors={value[index!].extra_authors} onChange={}/>
+                <SongField file={value[index!].file} name={value[index!].name} index={value[index!].index} authors={value[index!].extra_authors} onChange={(song:SongInterface, )=>{
+                     var new_value = value;
+                     new_value.splice(index!, 1);   
+                     new_value.splice(index!, 0, song);
+                     onChange(new_value);
+                     setIndex(undefined);
+                        
+                }}/>
                 }
             </ContainerWrapper>
         </div>

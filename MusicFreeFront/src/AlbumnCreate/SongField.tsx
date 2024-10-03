@@ -15,6 +15,7 @@ interface SongFieldProps{
 }
 
 export function SongField({index, name,  authors, file, onChange}:SongFieldProps){
+
 const [text_inputs, setTextInputs] = useState<{name: string|undefined, index: number|undefined}>({name: name, index: index });
 const [authorsState, setAuthors] = useState<Array<AuthorData>>(authors); 
 const [fileState, setfileState] = useState<File|undefined>(file);
@@ -22,10 +23,10 @@ function handleSubmit(){
     //проверять пуст ли файл если что отправлять ошибку
     //проверять другие штуки пустые ли
 onChange({
-    name: text_inputs.name,
-    index: text_inputs.index,
+    name: text_inputs.name!,
+    index: text_inputs.index!,
     extra_authors: authors,
-    file: fileState!
+    file: fileState!,
 });
 }
 function handleFileChange(e: React.ChangeEvent<HTMLInputElement>){
