@@ -4,9 +4,13 @@
     "@tanstack/router-plugin": "^1.43.12"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.36.1",
+    "axios": "^1.7.7",
     "dayjs": "^1.11.11",
     "graphql-ws": "^5.16.0",
     "react-bootstrap": "^2.10.4",
+    "react-hook-form": "^7.53.0",
+    "react-query": "^3.39.3",
     "urql": "^4.1.0"
   }
 }

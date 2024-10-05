@@ -1,4 +1,4 @@
-import {useForm, Controller} from "react-hook-form";
+
 import { ContainerWrapper } from "../utils/ContainerWrapper";
 import { AuthorSearch } from "../SearchForUpload/AuthorSearch";
 import { AlbumnSearch } from "../SearchForUpload/AlbumnSearch";
@@ -6,8 +6,19 @@ import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import { useMutation } from "@tanstack/react-query";
 import React, {useState} from "react";
 import axios from "axios";
+import { SongInterface } from "./SongInterface";
 
+interface AlbumnSendInterface{
+    name: string,
+    author: Array<string>,
+    songs: Array<SendSongInterface>
+}
 
+interface SendSongInterface{
+name: string,
+extra_authors: Array<string>,
+index: number,
+}
 
  interface SongUploadData{
         name: string,
@@ -23,60 +34,37 @@ import axios from "axios";
 
  
 export function SongUploadTemplate(){
-    const [mastate, setMastate]= useState<Array<AuthorData>>([{name:"", Id:""}]);
+    const [mastate, setMastate]= useState<Array<AuthorData>|undefined>();
     //var file = new FileList()
-    const {handleSubmit, register, setError, formState:{errors}, control }= useForm({defaultValues:{name: ""}});
-    const [albumnState, setalbState] = useState<AuthorData|undefined>({name: "", Id: ""});
-    const [fileState, setfileState] = useState<File|undefined>();
-   const [mistakesStatus, setmistakesStatus] = useState<mistakeStatus>({});
-    
-const mutationFunction = async (formData: FormData)=>(await axios.post("https://localhost:7190/music/song_upload", formData, {headers: {"Content-Type": 'multipart/form-data' }}))
+    const [name, setnameState] = useState<string>("");    
+    const [songs_state, setSongsState] = useState<Array<SongInterface>|undefined>();
+const mutationSecondFunction = async (data: SendSongInterface)=>(await axios.post("https://localhost:7190/music/song_upload", data))
    
-    const {mutate}  = useMutation({mutationFn: mutationFunction});
-
-
-
-    function handleSub(data:{name:string }){
-        
-        console.log(data);
-        var result_data: SongUploadData;
-        const formD = new FormData();
-        if(fileState==undefined){
-            setmistakesStatus({...mistakesStatus, file: "is_required" });
-            return;
-        }
-        let file_format = fileState?.name.split('.').pop();
-        console.log(file_format);
-        let second_file_format = file_format;
-        if(file_format!='.mp4'|| second_file_format != '.wav' ){
-            setmistakesStatus({...mistakesStatus, file: "wrong_format"});
-            return;
-        }
-        if(mastate== undefined){
-            setmistakesStatus({...mistakesStatus, author: "is_required"});
-            return;
-        }
-        let authors_id: string[] = [];
-        mastate.forEach((data)=>{authors_id.push(data.Id)});
-        formD.append('name', data.name);
-        formD.append("albumn", albumnState!.Id);
-        formD.append("author", JSON.stringify(authors_id));
-        formD.append("song", fileState!);
-        for (const value of formD.values()) {
-            console.log(value);
-          }
-        mutate(formD);
-
-    }
-function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>){
-setfileState(e.target.files![0]);
+   const mutationAlbumnFirstFn = async (formData:FormData)=>(await axios.post("https://localhost:7190/music/albumn_upload",formData, {headers: {"Content-Type": 'multipart/form-data' }}).then(
+    (response)=>(response.data)
+   ));
+   const mutationSecond = useMutation({mutationFn: mutationAlbumnFirstFn,});
+  const mutationFirst = useMutation({mutationFn: mutationAlbumnFirstFn, onSuccess: (data)=>{
+    var albu
+    var formData = new FormData;
+    mutationSecond.mutate(formData);
+  } });
+    
+function handleSubmit(e:React.SyntheticEvent<HTMLFormElement>){
+e.preventDefault();
+let songs_array: Array<SendSongInterface>=[];
+songs_state?.forEach((data)=>{
+    var strings_array: Array<string> = [];
+    data.extra_authors.forEach((data)=>{strings_array.push(data.Id)});
+    songs_array.push({name: data.name, index: data.index, extra_authors: strings_array})});
+var for_mutation: AlbumnSendInterface = {songs: songs_array, name: name, author:};
 
 }
 
 
-    return(<form onSubmit={handleSubmit(handleSub)}>
+    return(<form onSubmit={handleSubmit}>
         <ContainerWrapper>
-        <input {...register("name")} type="text"/>
+        <input onChange={(e:React.ChangeEvent<HTMLInputElement>)=>(setnameState(e.target.value))} type="text"/>
         </ContainerWrapper>
        
            <AuthorSearch value={mastate} onChange={(data: Array<AuthorData>)=>{setMastate(data);}} />
