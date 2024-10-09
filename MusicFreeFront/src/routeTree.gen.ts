@@ -12,7 +12,9 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SonguploadImport } from './routes/song_upload'
+import { Route as AuthorpageImport } from './routes/author_page'
 import { Route as AuthorcreateImport } from './routes/author_create'
+import { Route as AlbumncreateImport } from './routes/albumn_create'
 
 // Create/Update Routes
 
@@ -21,8 +23,18 @@ const SonguploadRoute = SonguploadImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const AuthorpageRoute = AuthorpageImport.update({
+  path: '/author_page',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthorcreateRoute = AuthorcreateImport.update({
   path: '/author_create',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AlbumncreateRoute = AlbumncreateImport.update({
+  path: '/albumn_create',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -30,11 +42,25 @@ const AuthorcreateRoute = AuthorcreateImport.update({
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/albumn_create': {
+      id: '/albumn_create'
+      path: '/albumn_create'
+      fullPath: '/albumn_create'
+      preLoaderRoute: typeof AlbumncreateImport
+      parentRoute: typeof rootRoute
+    }
     '/author_create': {
       id: '/author_create'
       path: '/author_create'
       fullPath: '/author_create'
       preLoaderRoute: typeof AuthorcreateImport
+      parentRoute: typeof rootRoute
+    }
+    '/author_page': {
+      id: '/author_page'
+      path: '/author_page'
+      fullPath: '/author_page'
+      preLoaderRoute: typeof AuthorpageImport
       parentRoute: typeof rootRoute
     }
     '/song_upload': {
@@ -50,7 +76,9 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren({
+  AlbumncreateRoute,
   AuthorcreateRoute,
+  AuthorpageRoute,
   SonguploadRoute,
 })
 
@@ -62,12 +90,20 @@ export const routeTree = rootRoute.addChildren({
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
+        "/albumn_create",
         "/author_create",
+        "/author_page",
         "/song_upload"
       ]
     },
+    "/albumn_create": {
+      "filePath": "albumn_create.tsx"
+    },
     "/author_create": {
       "filePath": "author_create.tsx"
+    },
+    "/author_page": {
+      "filePath": "author_page.tsx"
     },
     "/song_upload": {
       "filePath": "song_upload.tsx"

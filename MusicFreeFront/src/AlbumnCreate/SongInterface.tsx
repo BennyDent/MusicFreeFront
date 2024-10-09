@@ -6,3 +6,4 @@ file: File,
 name: string,
 index: number
 }
+

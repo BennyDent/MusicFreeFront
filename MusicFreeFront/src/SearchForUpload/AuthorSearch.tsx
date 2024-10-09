@@ -16,7 +16,7 @@ export interface MusicianForChoice{
 }
 
 interface author_search_props{
-    value: Array<AuthorData>
+    value: Array<AuthorData>|undefined,
     onChange: (data: Array<AuthorData>)=>void
 }
 
@@ -40,8 +40,8 @@ function handleUnchoosen(data: AuthorData){
             return true;
         }
        }
-    console.log(value.filter(filterFn));
-    onChange(value.filter(filterFn));
+    console.log(value!.filter(filterFn));
+    onChange(value!.filter(filterFn));
 }
 
     return(<div>
@@ -49,12 +49,15 @@ function handleUnchoosen(data: AuthorData){
     setFindState(event.target.value);}} find={()=>{}}/>
     <Choose_AuthorContext  update={(data: AuthorData)=>{
   var new_array = value;
+  if(new_array==undefined){
+    new_array = [];
+  }
   new_array.push(data);
         onChange(new_array);
     }}>
         <SearchResults value={findState} data={data} status={status} />
         </Choose_AuthorContext> 
-        {value.map((data, index)=>(<SearchResultComponent status="unchoosen" key={index} updateFn={(data:AuthorData)=>{handleUnchoosen(data)}} name={data.name} Id={data.Id}/> ))}
+        {value?.map((data, index)=>(<SearchResultComponent status="unchoosen" key={index} updateFn={(data:AuthorData)=>{handleUnchoosen(data)}} name={data.name} Id={data.Id}/> ))}
          
         
         </div>

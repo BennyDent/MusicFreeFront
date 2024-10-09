@@ -7,25 +7,22 @@ import axios from "axios";
 import { SongInterface } from "./SongInterface";
 
 interface SongFieldProps{
-    name?: string,
-    index?: number,
-    authors: Array<AuthorData>,
-    file?: File
+    song: SongInterface|undefined
     onChange: (song: SongInterface)=> void
 }
 
-export function SongField({index, name,  authors, file, onChange}:SongFieldProps){
+export function SongField({song, onChange}:SongFieldProps){
 
-const [text_inputs, setTextInputs] = useState<{name: string|undefined, index: number|undefined}>({name: name, index: index });
-const [authorsState, setAuthors] = useState<Array<AuthorData>>(authors); 
-const [fileState, setfileState] = useState<File|undefined>(file);
+const [text_inputs, setTextInputs] = useState<{name: string|undefined, index: number|undefined}>({name: song?.name, index: song?.index });
+const [authorsState, setAuthors] = useState<Array<AuthorData>|undefined>(song?.extra_authors); 
+const [fileState, setfileState] = useState<File|undefined>(song?.file);
 function handleSubmit(){
     //проверять пуст ли файл если что отправлять ошибку
     //проверять другие штуки пустые ли
 onChange({
     name: text_inputs.name!,
     index: text_inputs.index!,
-    extra_authors: authors,
+    extra_authors: song?.extra_authors!,
     file: fileState!,
 });
 }
@@ -35,9 +32,9 @@ setfileState(e.target.files![0]);
 return(
 <div>
 <form onSubmit={handleSubmit}>
-<input type="text"/>
-<input type="text"/>
-<AuthorSearch value={authors} onChange={(data: Array<AuthorData>)=>{setAuthors(data);}}/>
+<input onChange={(e:React.FormEvent<HTMLInputElement>)=>{setTextInputs({...text_inputs, name: e.currentTarget.value})}} type="text"/>
+ <input type="text" pattern="[0-9]*" onChange={(e:React.FormEvent<HTMLInputElement>)=>{setTextInputs({...text_inputs, index: parseInt( e.currentTarget.value, 10)})}}/>
+<AuthorSearch value={authorsState} onChange={(data: Array<AuthorData>)=>{setAuthors(data);}}/>
 
 </form>
 

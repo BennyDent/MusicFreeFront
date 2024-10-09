@@ -13,14 +13,14 @@ interface AlbumnProps{
     author_id: string
 }
 
-const queryfn = async (authorname: string )=>(await axios.post("https://localhost:7190/music/find_author/"+authorname));
+const queryfn = async (authorname: string,albumn_id:string )=>(await axios.post("https://localhost:7190/music/find_albumn/"+authorname+"/"+albumn_id));
 
 //qClient.refetchQueries({queryKey: ["authorSearch"]})
 export function AlbumnSearch({value, onChange,  author_id}:AlbumnProps){
 
     const [findState, setfindState]= useState<string>("")
     const [is_choosen, setisChoosen] = useState<boolean>(false)
-const {data, status} = useQuery({queryKey: ["albumnSearch"],queryFn: async ()=>(await queryfn(findState)) });
+const {data, status} = useQuery({queryKey: ["albumnSearch"],queryFn: async ()=>(await queryfn(findState, author_id)) });
     return(<div>
         <FieldComponent value={findState} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
     setfindState(event.target.value);}} find={()=>{}}/>

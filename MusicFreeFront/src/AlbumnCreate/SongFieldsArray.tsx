@@ -13,35 +13,39 @@ interface SongFieldProps{
     onChange: (songs: Array<SongInterface>)=>void
 }
 
-function SongFieldsArray({value, onChange}:SongFieldProps){
 
-const [status, setStatus] = useState<"create"|"edit">("create");
-const [index, setIndex] = useState<number|undefined>();
-function handleEdit(index: number){
+
+
+export function SongFieldsArray({value, onChange}:SongFieldProps){
+
+const [status, setStatus] = useState<{status:"create"|"edit", song?: SongInterface  }>({status: "create"});
+function handleEdit(song: SongInterface){
   
-    setStatus("edit");
-    setIndex(index);
+    setStatus({status:"edit", song});
+const handleDictionary={
+    edit: (song:SongInterface, )=>{
+        var new_value = value;
+        new_value.splice(song.index!, 1);   
+        new_value.splice(song.index!, 0, song);
+        onChange(new_value);
+        setStatus({status: "create"});
+           
+},
+create:(song: SongInterface)=>{
+    var value_copy = value;
+    value_copy.push(song);
+    onChange(value_copy);}
+
 }
+
     return(
         <div>
             <ContainerWrapper>
                 {value.map((data: SongInterface)=>(<CreatedSongs song={data} onEdit={handleEdit}/>))}
             </ContainerWrapper>
             <ContainerWrapper>
-                {status=='create'? <SongField file={undefined} name={undefined} index={undefined} authors={[]} onChange={(song: SongInterface)=>{
-                    var value_copy = value;
-                    value_copy.push(song);
-                    onChange(value_copy);}}/>:
-                <SongField file={value[index!].file} name={value[index!].name} index={value[index!].index} authors={value[index!].extra_authors} onChange={(song:SongInterface, )=>{
-                     var new_value = value;
-                     new_value.splice(index!, 1);   
-                     new_value.splice(index!, 0, song);
-                     onChange(new_value);
-                     setIndex(undefined);
-                        
-                }}/>
-                }
+                <SongField onChange={handleDictionary[status.status]} song={status?.song}/>
             </ContainerWrapper>
         </div>
     );
-}
+}}
