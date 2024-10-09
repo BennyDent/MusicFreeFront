@@ -21,7 +21,7 @@ export function SongFieldsArray({value, onChange}:SongFieldProps){
 const [status, setStatus] = useState<{status:"create"|"edit", song?: SongInterface  }>({status: "create"});
 function handleEdit(song: SongInterface){
   
-    setStatus({status:"edit", song});
+    setStatus({status:"edit", song});}
 const handleDictionary={
     edit: (song:SongInterface, )=>{
         var new_value = value;
@@ -48,4 +48,4 @@ create:(song: SongInterface)=>{
             </ContainerWrapper>
         </div>
     );
-}}
+}

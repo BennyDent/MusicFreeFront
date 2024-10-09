@@ -6,7 +6,7 @@ import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import { useMutation } from "@tanstack/react-query";
 import React, {useState} from "react";
 import axios from "axios";
-import { SongInterface, SongUndefinedInterface } from "./SongInterface";
+import { SongInterface } from "./SongInterface";
 import { SearchField } from "../SearchForUpload/SearchField.";
 import { SongFieldsArray } from "./SongFieldsArray";
 import { SongField } from "./SongField";
@@ -50,7 +50,7 @@ export function AlbumnUploadTemplate(){
     const [mastate, setMastate]= useState<Array<AuthorData>|undefined>();
     //var file = new FileList()
     const [name, setnameState] = useState<string>("");    
-    const [songs_state, setSongsState] = useState<Array<SongInterface>>();
+    const [songs_state, setSongsState] = useState<Array<SongInterface>>([]);
 const mutationAlbumnFirstFn = async (data: AlbumnSendInterface)=>(await axios.post("https://localhost:7190/music/create_albumn", data))
    
    const mutationSecondFunction = async (formData:FormData)=>(await axios.post("https://localhost:7190/music/upload_albumn",formData, {headers: {"Content-Type": 'multipart/form-data' }}).then(
@@ -61,8 +61,11 @@ const mutationAlbumnFirstFn = async (data: AlbumnSendInterface)=>(await axios.po
    console.log(data);
     var formData = new FormData;
      [{filename: ",", index: 3}].forEach((element: ResultInterface) => {
-        let needed_song = songs_state!.filter(a=> a.index==element.index)[0];
-        formData.append(element.filename, needed_song.file);
+        let needed_song:SongInterface = songs_state!.filter(a=> a.index==element.index)[0]!;
+        if(needed_song == undefined){
+            // mistake
+        }
+        formData.append(element.filename, needed_song!.file);
           mutationSecond.mutate(formData);
     });
 
@@ -95,7 +98,7 @@ mutationFirst.mutate(for_mutation);
        </ContainerWrapper>
            <AuthorSearch value={mastate!} onChange={(data: Array<AuthorData>)=>{setMastate(data);}} />
         <ContainerWrapper>
-           <SongFieldsArray value={songs_state} onChange={()=>{}}/>
+           <SongFieldsArray value={songs_state} onChange={(songs: Array<SongInterface>)=>{setSongsState(songs);}}/>
            
             <button  type="submit">submit</button>
        </ContainerWrapper>
