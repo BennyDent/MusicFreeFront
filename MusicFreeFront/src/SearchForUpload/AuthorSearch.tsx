@@ -7,7 +7,7 @@ import { AuthorData } from "./SearchResultComponent";
 import { ContainerWrapper } from "../utils/ContainerWrapper";
 import {SearchResultComponent} from "./SearchResultComponent";
 import { FieldComponent } from "./FieldComponent";
-const queryfn = async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname));
+const queryfn = async ()=>{return await axios.get("https://localhost:7190/music/find_author/"+queryKey[1])};
 
 export interface MusicianForChoice{
     name: string,
@@ -24,9 +24,9 @@ export function AuthorSearch({onChange, value}:author_search_props){
     
     //const qClient= useQueryClient();
     const [findState, setFindState]= useState<string>("");
-    useEffect(()=>{} ,[findState]);
     
-    const {data, status} = useQuery({queryKey: ["authorSearch"],queryFn: async ()=>(await queryfn(findState)) });
+    
+    const {data, status} = useQuery({queryKey: ["authorSearch", findState],queryFn: queryfn });
     
 //qClient.refetchQueries({queryKey: ["authorSearch"]})
 function handleUnchoosen(data: AuthorData){

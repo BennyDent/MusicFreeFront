@@ -13,7 +13,7 @@ import { SongField } from "./SongField";
 const queryfn = async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname));
 interface AlbumnSendInterface{
 name: string,
-    main_author: string,
+    main_author?: string,
     authors: Array<string>,
     songs: Array<SendSongInterface>
 }
@@ -83,7 +83,7 @@ songs_state?.forEach((data)=>{
     var strings_array: Array<string> = [];
     data.extra_authors!.forEach((data)=>{strings_array.push(data.Id)});
     songs_array.push({name: data.name!, index: data.index!, extra_authors: strings_array, main_author: main_author!.Id})});
-var for_mutation: AlbumnSendInterface = {songs: songs_array, name: name, main_author: main_author!.Id, authors: authors_id!};
+var for_mutation: AlbumnSendInterface = {songs: songs_array, name: name, main_author: main_author?.Id, authors: authors_id!};
 mutationFirst.mutate(for_mutation);
 
 }

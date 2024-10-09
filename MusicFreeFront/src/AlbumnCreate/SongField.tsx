@@ -31,12 +31,12 @@ setfileState(e.target.files![0]);
 }
 return(
 <div>
-<form onSubmit={handleSubmit}>
+
 <input onChange={(e:React.FormEvent<HTMLInputElement>)=>{setTextInputs({...text_inputs, name: e.currentTarget.value})}} type="text"/>
  <input type="text" pattern="[0-9]*" onChange={(e:React.FormEvent<HTMLInputElement>)=>{setTextInputs({...text_inputs, index: parseInt( e.currentTarget.value, 10)})}}/>
 <AuthorSearch value={authorsState} onChange={(data: Array<AuthorData>)=>{setAuthors(data);}}/>
 
-</form>
+<button onClick={handleSubmit}>Submit</button>
 
 </div>
 );
