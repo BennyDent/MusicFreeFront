@@ -14,7 +14,7 @@ if (data.length==1){
         <Row>
        <Col>
        <Link to={"/"} 
-       params={{id: data[0].Id}}>{data[0].name}</Link> 
+       params={{id: data[0].Id, }}>{data[0].name}</Link> 
        </Col>
         </Row>
     </Container>

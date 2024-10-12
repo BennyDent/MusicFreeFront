@@ -13,9 +13,7 @@ interface SongFieldProps{
 
 export function SongField({song, onChange}:SongFieldProps){
 
-const [text_inputs, setTextInputs] = useState<{name: string|undefined, index: number|undefined}>({name: song?.name, index: song?.index });
-const [authorsState, setAuthors] = useState<Array<AuthorData>|undefined>(song?.extra_authors); 
-const [fileState, setfileState] = useState<File|undefined>(song?.file);
+
 function handleSubmit(){
     //проверять пуст ли файл если что отправлять ошибку
     //проверять другие штуки пустые ли

@@ -7,7 +7,7 @@ import { AuthorData } from "./SearchResultComponent";
 import { ContainerWrapper } from "../utils/ContainerWrapper";
 import {SearchResultComponent} from "./SearchResultComponent";
 import { FieldComponent } from "./FieldComponent";
-const queryfn = async ()=>{return await axios.get("https://localhost:7190/music/find_author/"+queryKey[1])};
+
 
 export interface MusicianForChoice{
     name: string,

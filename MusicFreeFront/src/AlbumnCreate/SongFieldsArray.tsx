@@ -8,6 +8,7 @@ import axios from "axios";
 import { SongInterface } from "./SongInterface";
 import { CreatedSongs } from "./CreatedSongs";
 import { SongField } from "./SongField";
+import { useSongField } from "./useSongField";
 interface SongFieldProps{
     value: Array<SongInterface>,
     onChange: (songs: Array<SongInterface>)=>void
@@ -17,7 +18,7 @@ interface SongFieldProps{
 
 
 export function SongFieldsArray({value, onChange}:SongFieldProps){
-
+const states = useSongField(undefined);
 const [status, setStatus] = useState<{status:"create"|"edit", song?: SongInterface  }>({status: "create"});
 function handleEdit(song: SongInterface){
   
