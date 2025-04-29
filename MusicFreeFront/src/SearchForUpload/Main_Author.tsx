@@ -32,7 +32,7 @@ const {data, status} = useQuery({queryKey: ["albumnSearch"],queryFn: async ()=>(
         onChange(data);
     }}>
         <SearchResults value={findState} data={data} status={status} />
-        </Choose_AuthorContext> : <SearchResultComponent status="choosen" updateFn={(data:AuthorData)=>{setisChoosen(false)}} name={value.name} Id={value.Id}/>}
+        </Choose_AuthorContext> : <SearchResultComponent status="choosen" updateFn={(data:AuthorData)=>{setisChoosen(false)}} name={value.name!} Id={value.id}/>}
        
   </div>  );
 }

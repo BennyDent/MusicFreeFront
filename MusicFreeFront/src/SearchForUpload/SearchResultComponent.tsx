@@ -6,8 +6,8 @@ import {Row} from "react-bootstrap";
 import {Col} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css';
 export interface AuthorData{
-    name: string;
-    Id: string; 
+    name?: string;
+    id: string; 
    
 }
 interface AuthorProps{
@@ -34,7 +34,7 @@ export function SearchResultComponent({name, Id, status,  updateFn}:AuthorProps)
                 {name}
                 </Col>
                 <Col xl={2}>
-                {status=="choosen" ? <button  onClick={(e)=>{update({name, Id})}}> + </button>: <button onClick={(e)=>{update({name, Id})}}> - </button>}
+                {status=="choosen" ? <button  onClick={(e)=>{update({name, id: Id})}}> + </button>: <button onClick={(e)=>{update({name, id: Id})}}> - </button>}
                 </Col>
             </Row>
         </Container>

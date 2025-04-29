@@ -12,9 +12,18 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as SonguploadImport } from './routes/song_upload'
-import { Route as AuthorpageImport } from './routes/author_page'
+import { Route as RegistrationImport } from './routes/registration'
+import { Route as MusicpagesImport } from './routes/music_pages'
+import { Route as LoginImport } from './routes/login'
+import { Route as EmailsendImport } from './routes/email_send'
+import { Route as EmailchangeImport } from './routes/email_change'
 import { Route as AuthorcreateImport } from './routes/author_create'
 import { Route as AlbumncreateImport } from './routes/albumn_create'
+import { Route as MusicpagesSearchfullpageImport } from './routes/music_pages.search_full_page'
+import { Route as MusicpagesSearchImport } from './routes/music_pages.search'
+import { Route as MusicpagesMainpageImport } from './routes/music_pages.main_page'
+import { Route as MusicpagesAuthorpageImport } from './routes/music_pages.author_page'
+import { Route as MusicpagesAlbumnpageImport } from './routes/music_pages.albumn_page'
 
 // Create/Update Routes
 
@@ -23,8 +32,28 @@ const SonguploadRoute = SonguploadImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthorpageRoute = AuthorpageImport.update({
-  path: '/author_page',
+const RegistrationRoute = RegistrationImport.update({
+  path: '/registration',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const MusicpagesRoute = MusicpagesImport.update({
+  path: '/music_pages',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const LoginRoute = LoginImport.update({
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const EmailsendRoute = EmailsendImport.update({
+  path: '/email_send',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const EmailchangeRoute = EmailchangeImport.update({
+  path: '/email_change',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -36,6 +65,31 @@ const AuthorcreateRoute = AuthorcreateImport.update({
 const AlbumncreateRoute = AlbumncreateImport.update({
   path: '/albumn_create',
   getParentRoute: () => rootRoute,
+} as any)
+
+const MusicpagesSearchfullpageRoute = MusicpagesSearchfullpageImport.update({
+  path: '/search_full_page',
+  getParentRoute: () => MusicpagesRoute,
+} as any)
+
+const MusicpagesSearchRoute = MusicpagesSearchImport.update({
+  path: '/search',
+  getParentRoute: () => MusicpagesRoute,
+} as any)
+
+const MusicpagesMainpageRoute = MusicpagesMainpageImport.update({
+  path: '/main_page',
+  getParentRoute: () => MusicpagesRoute,
+} as any)
+
+const MusicpagesAuthorpageRoute = MusicpagesAuthorpageImport.update({
+  path: '/author_page',
+  getParentRoute: () => MusicpagesRoute,
+} as any)
+
+const MusicpagesAlbumnpageRoute = MusicpagesAlbumnpageImport.update({
+  path: '/albumn_page',
+  getParentRoute: () => MusicpagesRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -56,11 +110,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorcreateImport
       parentRoute: typeof rootRoute
     }
-    '/author_page': {
-      id: '/author_page'
-      path: '/author_page'
-      fullPath: '/author_page'
-      preLoaderRoute: typeof AuthorpageImport
+    '/email_change': {
+      id: '/email_change'
+      path: '/email_change'
+      fullPath: '/email_change'
+      preLoaderRoute: typeof EmailchangeImport
+      parentRoute: typeof rootRoute
+    }
+    '/email_send': {
+      id: '/email_send'
+      path: '/email_send'
+      fullPath: '/email_send'
+      preLoaderRoute: typeof EmailsendImport
+      parentRoute: typeof rootRoute
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/music_pages': {
+      id: '/music_pages'
+      path: '/music_pages'
+      fullPath: '/music_pages'
+      preLoaderRoute: typeof MusicpagesImport
+      parentRoute: typeof rootRoute
+    }
+    '/registration': {
+      id: '/registration'
+      path: '/registration'
+      fullPath: '/registration'
+      preLoaderRoute: typeof RegistrationImport
       parentRoute: typeof rootRoute
     }
     '/song_upload': {
@@ -70,6 +152,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SonguploadImport
       parentRoute: typeof rootRoute
     }
+    '/music_pages/albumn_page': {
+      id: '/music_pages/albumn_page'
+      path: '/albumn_page'
+      fullPath: '/music_pages/albumn_page'
+      preLoaderRoute: typeof MusicpagesAlbumnpageImport
+      parentRoute: typeof MusicpagesImport
+    }
+    '/music_pages/author_page': {
+      id: '/music_pages/author_page'
+      path: '/author_page'
+      fullPath: '/music_pages/author_page'
+      preLoaderRoute: typeof MusicpagesAuthorpageImport
+      parentRoute: typeof MusicpagesImport
+    }
+    '/music_pages/main_page': {
+      id: '/music_pages/main_page'
+      path: '/main_page'
+      fullPath: '/music_pages/main_page'
+      preLoaderRoute: typeof MusicpagesMainpageImport
+      parentRoute: typeof MusicpagesImport
+    }
+    '/music_pages/search': {
+      id: '/music_pages/search'
+      path: '/search'
+      fullPath: '/music_pages/search'
+      preLoaderRoute: typeof MusicpagesSearchImport
+      parentRoute: typeof MusicpagesImport
+    }
+    '/music_pages/search_full_page': {
+      id: '/music_pages/search_full_page'
+      path: '/search_full_page'
+      fullPath: '/music_pages/search_full_page'
+      preLoaderRoute: typeof MusicpagesSearchfullpageImport
+      parentRoute: typeof MusicpagesImport
+    }
   }
 }
 
@@ -78,7 +195,17 @@ declare module '@tanstack/react-router' {
 export const routeTree = rootRoute.addChildren({
   AlbumncreateRoute,
   AuthorcreateRoute,
-  AuthorpageRoute,
+  EmailchangeRoute,
+  EmailsendRoute,
+  LoginRoute,
+  MusicpagesRoute: MusicpagesRoute.addChildren({
+    MusicpagesAlbumnpageRoute,
+    MusicpagesAuthorpageRoute,
+    MusicpagesMainpageRoute,
+    MusicpagesSearchRoute,
+    MusicpagesSearchfullpageRoute,
+  }),
+  RegistrationRoute,
   SonguploadRoute,
 })
 
@@ -92,7 +219,11 @@ export const routeTree = rootRoute.addChildren({
       "children": [
         "/albumn_create",
         "/author_create",
-        "/author_page",
+        "/email_change",
+        "/email_send",
+        "/login",
+        "/music_pages",
+        "/registration",
         "/song_upload"
       ]
     },
@@ -102,11 +233,50 @@ export const routeTree = rootRoute.addChildren({
     "/author_create": {
       "filePath": "author_create.tsx"
     },
-    "/author_page": {
-      "filePath": "author_page.tsx"
+    "/email_change": {
+      "filePath": "email_change.tsx"
+    },
+    "/email_send": {
+      "filePath": "email_send.tsx"
+    },
+    "/login": {
+      "filePath": "login.tsx"
+    },
+    "/music_pages": {
+      "filePath": "music_pages.tsx",
+      "children": [
+        "/music_pages/albumn_page",
+        "/music_pages/author_page",
+        "/music_pages/main_page",
+        "/music_pages/search",
+        "/music_pages/search_full_page"
+      ]
+    },
+    "/registration": {
+      "filePath": "registration.tsx"
     },
     "/song_upload": {
       "filePath": "song_upload.tsx"
+    },
+    "/music_pages/albumn_page": {
+      "filePath": "music_pages.albumn_page.tsx",
+      "parent": "/music_pages"
+    },
+    "/music_pages/author_page": {
+      "filePath": "music_pages.author_page.tsx",
+      "parent": "/music_pages"
+    },
+    "/music_pages/main_page": {
+      "filePath": "music_pages.main_page.tsx",
+      "parent": "/music_pages"
+    },
+    "/music_pages/search": {
+      "filePath": "music_pages.search.tsx",
+      "parent": "/music_pages"
+    },
+    "/music_pages/search_full_page": {
+      "filePath": "music_pages.search_full_page.tsx",
+      "parent": "/music_pages"
     }
   }
 }

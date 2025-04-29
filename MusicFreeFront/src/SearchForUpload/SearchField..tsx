@@ -8,32 +8,33 @@ import { ContainerWrapper } from "../utils/ContainerWrapper";
 import {SearchResultComponent} from "./SearchResultComponent";
 import { FieldComponent } from "./FieldComponent";
 import { SearchResults } from "./AuthorSearch";
-const queryfn = async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname));
+import { PageInterface } from "../utils/PageInterface";
 
 
 
 interface author_search_props{
+
     value: AuthorData,
         onChange: (data: AuthorData)=>void,
-    author_id?: string,
-    queryFn: (s: string, author_id?: string)=>Promise<AxiosResponse<any,any>| undefined>
+  queryKey: string,
+   urlArray: string[]
 }
 
-export function SearchField({onChange, value, author_id, queryFn}:author_search_props){
+ function SearchField({onChange, value, queryKey,   urlArray}:author_search_props){
     
     const [is_choosen, setisChoosen] = useState<boolean>(false);
-    //const qClient= useQueryClient();
+    const q_client= useQueryClient();
     const [findState, setfindState]= useState<string>("");
     useEffect(()=>{} ,[findState]);
     
-    const {data, status} = useQuery({queryKey: ["authorSearch"],queryFn: async ()=>(await queryFn(findState, author_id!)) });
+    const {data, status} = useQuery({queryKey: [...urlArray, queryKey],queryFn: async ()=>(await queryFn(findState)) });
     
 //qClient.refetchQueries({queryKey: ["authorSearch"]})
 function handleUnchoosen(data: AuthorData){
     console.log(data);
     console.log(value);
     const filterFn = (m: AuthorData)=>{
-        if(data.Id==m.Id && data.name== m.name){
+        if(data.id==m.id && data.name== m.name){
             return false;
         }
         else{
@@ -42,10 +43,12 @@ function handleUnchoosen(data: AuthorData){
        }
     onChange(value);
 }
-
+console.log(value);
      return(<div>
         <FieldComponent value={findState} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-    setfindState(event.target.value);}} find={()=>{}}/>
+    setfindState(event.target.value);}} find={()=>{()=>{
+        q_client.resetQueries({queryKey: ["authorSearch"]});
+        q_client.refetchQueries({queryKey: ["authorSearch"]});}}}/>
      
        
     {is_choosen==false ? <Choose_AuthorContext  update={(data: AuthorData)=>{
@@ -54,7 +57,7 @@ function handleUnchoosen(data: AuthorData){
         onChange(data);
     }}>
         <SearchResults value={findState} data={data} status={status} />
-        </Choose_AuthorContext> : <SearchResultComponent status="choosen" updateFn={(data:AuthorData)=>{setisChoosen(false)}} name={value.name} Id={value.Id}/>}
+        </Choose_AuthorContext> : <SearchResultComponent status="choosen" updateFn={(data:AuthorData)=>{setisChoosen(false)}} name={value.name!} Id={value.id}/>}
        
   </div>);
 }

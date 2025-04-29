@@ -2,41 +2,71 @@ import {useForm, Controller} from "react-hook-form";
 import { ContainerWrapper } from "../utils/ContainerWrapper";
 import { AuthorSearch } from "../SearchForUpload/AuthorSearch";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
-import React, {useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import axios from "axios";
 import { SongInterface } from "./SongInterface";
+import { HookReturn } from "./useSongField";
 
 interface SongFieldProps{
-    song: SongInterface|undefined
+    name?: string,
+    index?: number,
+    extra_authors: Array<AuthorData>,
+    file?: File,
+    
     onChange: (song: SongInterface)=> void
 }
 
-export function SongField({song, onChange}:SongFieldProps){
+export function SongField({name, index, extra_authors, file, onChange}:SongFieldProps){
+    const inputFile = useRef<any>(null);
+const [key, setKey] = useState("sss")
+const [nameState, setnameState] = useState<string|undefined>(name);
+const [indexState, setindexState] = useState<number|undefined>(index);
+const [extra_authorsState, setAuthorsState] = useState<Array<AuthorData>>(extra_authors);
+const [ fileState, setFileState] = useState<File|undefined>(file);
+function handleSubmit(event: React.MouseEvent<HTMLButtonElement>){
+    event.preventDefault();
+    let is_ready: Boolean = false;
 
-const [text_inputs, setTextInputs] = useState<{name: string|undefined, index: number|undefined}>({name: song?.name, index: song?.index });
-const [authorsState, setAuthors] = useState<Array<AuthorData>|undefined>(song?.extra_authors); 
-const [fileState, setfileState] = useState<File|undefined>(song?.file);
-function handleSubmit(){
+
     //проверять пуст ли файл если что отправлять ошибку
     //проверять другие штуки пустые ли
+
 onChange({
-    name: text_inputs.name!,
-    index: text_inputs.index!,
-    extra_authors: song?.extra_authors!,
+   
+
+    name: nameState!,
+    index: indexState!,
+    extra_authors: extra_authorsState,
     file: fileState!,
 });
 }
-function handleFileChange(e: React.ChangeEvent<HTMLInputElement>){
-setfileState(e.target.files![0]);
-}
+useEffect(()=>{
+    console.log(name);
+    setnameState(name);},[name]);
+useEffect(()=>{setindexState(index)}, [index]);
+useEffect(()=>{setAuthorsState(extra_authors)}, [extra_authors]);
+useEffect(()=>{
+    console.log(16);
+    if (file?.webkitRelativePath==""){
+       if(inputFile.current){
+        inputFile.current.value= "";
+        console.log(inputFile.current.value, 14);
+
+       }
+        
+    }
+     setFileState(file)
+   },[file]);
+
+
 return(
 <div>
 
-<input onChange={(e:React.FormEvent<HTMLInputElement>)=>{setTextInputs({...text_inputs, name: e.currentTarget.value})}} type="text"/>
- <input type="text" pattern="[0-9]*" onChange={(e:React.FormEvent<HTMLInputElement>)=>{setTextInputs({...text_inputs, index: parseInt( e.currentTarget.value, 10)})}}/>
-<AuthorSearch value={authorsState} onChange={(data: Array<AuthorData>)=>{setAuthors(data);}}/>
-
-<button onClick={handleSubmit}>Submit</button>
+<input value={nameState}  onChange={(e:React.FormEvent<HTMLInputElement>)=>{setnameState(e.currentTarget.value)}} type="text"/>
+ <input type="text" pattern="[1-9]*" value={indexState} onChange={(e:React.FormEvent<HTMLInputElement>)=>{setindexState(parseInt(e.currentTarget.value, 10))}}/>
+<AuthorSearch queryKey={"song_extra_authors"} value={extra_authors} onChange={(data: Array<AuthorData>)=>{setAuthorsState(data);}}  />
+<input type="file" onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setFileState(e.target.files![0])}} ref={inputFile}/>
+<button  type="button" onClick={handleSubmit}>Submit</button>
 
 </div>
 );

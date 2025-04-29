@@ -21,7 +21,7 @@ export function FieldComponent({value, onChange, find}:FieldComponentProps){
         <TextField value={value} onChange={onChange}/>
         </Col>
         <Col xl={3}>
-        <button onClick={find}>
+        <button type="button" onClick={find}>
             Find
         </button>
         </Col>

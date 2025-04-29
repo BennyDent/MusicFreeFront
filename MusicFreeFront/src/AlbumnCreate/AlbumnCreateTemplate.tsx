@@ -5,22 +5,23 @@ import { AlbumnSearch } from "../SearchForUpload/AlbumnSearch";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import { useMutation } from "@tanstack/react-query";
 import React, {useState} from "react";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { SongInterface } from "./SongInterface";
 import { SearchField } from "../SearchForUpload/SearchField.";
 import { SongFieldsArray } from "./SongFieldsArray";
 import { SongField } from "./SongField";
+import { Controller, useForm, ValidateResult } from "react-hook-form";
+import { ChangeEvent } from "react";
 const queryfn = async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname));
 interface AlbumnSendInterface{
 name: string,
     main_author?: string,
-    authors: Array<string>,
+    extra_authors: Array<string>,
     songs: Array<SendSongInterface>
 }
 
 interface SendSongInterface{
 name: string,
-
 main_author: string,
 extra_authors: Array<string>,
 index: number,
@@ -43,64 +44,124 @@ index: number,
     index: number,
     filename: string,
  }
- 
+
+interface CreateAlbumn{
+    main_author: AuthorData|undefined,
+    extra_authors: Array<AuthorData>|undefined,
+    name: string,
+    songs: Array<SongInterface>,
+    cover_image: File|undefined,
+    tags: Array<AuthorData>|undefined,
+    genres: Array<AuthorData>|undefined,
+}
+
+function validate(file:File|undefined): ValidateResult {
+if(file==undefined){
+return false||"Cover image is required!"
+}
+if(file.name=="png"||"jpeg"||"tiff"||"svg"){
+    return true;
+}else{
+    return false||"Wrong format or cover image!"
+}
+
+}
+
+ //{headers: {"Content-Type": 'multipart/form-data' }}
 export function AlbumnUploadTemplate(){
-   
+   function CreateFormData(data: any):FormData{
+var formData = new FormData();
+console.log(data);
+data.forEach((element: ResultInterface) => {
+    console.log(data);
+   console.log("send")
+    if(element.index==-1){
+        formData.append(element.filename, cover_img!);
+
+    }
+  /*  else{
+    let needed_song:SongInterface = songs_state!.filter(a=> a.index==element.index)[0]!;
+    if(needed_song == undefined){
+        // mistake
+    }
+
+    formData.append(element.filename, needed_song.file!);
+    
+    }
+*/
+  
+   });
+     return formData;}
+
     const [main_author, setMainAuthor] = useState<AuthorData|undefined>();
     const [mastate, setMastate]= useState<Array<AuthorData>|undefined>();
     //var file = new FileList()
     const [name, setnameState] = useState<string>("");    
     const [songs_state, setSongsState] = useState<Array<SongInterface>>([]);
-const mutationAlbumnFirstFn = async (data: AlbumnSendInterface)=>(await axios.post("https://localhost:7190/music/create_albumn", data))
-   
-   const mutationSecondFunction = async (formData:FormData)=>(await axios.post("https://localhost:7190/music/upload_albumn",formData, {headers: {"Content-Type": 'multipart/form-data' }}).then(
-    (response)=>(response.data)
-   ));
-   const mutationSecond = useMutation({mutationFn: mutationSecondFunction,});
-  const mutationFirst = useMutation({mutationFn: mutationAlbumnFirstFn, onSuccess: (data)=>{
-   console.log(data);
-    var formData = new FormData;
-     [{filename: ",", index: 3}].forEach((element: ResultInterface) => {
-        let needed_song:SongInterface = songs_state!.filter(a=> a.index==element.index)[0]!;
-        if(needed_song == undefined){
-            // mistake
-        }
-        formData.append(element.filename, needed_song!.file);
-          mutationSecond.mutate(formData);
-    });
+    const [cover_img, setCoverImg] = useState<File>()
+const {register, control, handleSubmit,} = useForm<CreateAlbumn>({defaultValues: {main_author: undefined, name: "", extra_authors: undefined, songs: [], cover_image: undefined, tags: undefined, genres: undefined }});
 
+const mutationAlbumnFirstFn = async (data: AlbumnSendInterface)=>(await axios.post("https://localhost:7190/music/create_albumn/", data).then((r:AxiosResponse)=>{console.log(r); return r;}))
+   const send =  async(data:AlbumnSendInterface)=>(await mutationAlbumnFirstFn(data).then((r)=>{mutationSecondFunction(CreateFormData(r.data))})  ) ;
+   const mutationSecondFunction = async (formData:FormData)=>(await axios.post("https://localhost:7190/music/upload_albumn/",formData ).then((r:AxiosResponse)=>{console.log(r);}));
+   const mutationSecond = useMutation({mutationFn: mutationSecondFunction, onSuccess:(data)=>{console.log(data, 222);}});
+  const mutationFirst = useMutation({mutationFn: mutationAlbumnFirstFn, onSuccess: (data)=>{
+
+  
+
+ mutationSecond.mutate(CreateFormData(data));
    
   } });
    
-function handleSubmit(e:React.SyntheticEvent<HTMLFormElement>){
-e.preventDefault();
+async function  handleSub(data:CreateAlbumn){
+
+
 var authors_id: Array<string>;
 let songs_array: Array<SendSongInterface>=[];
-mastate?.forEach((data:AuthorData)=>{
-    authors_id.push(data.Id);
+data.extra_authors?.forEach((data:AuthorData)=>{
+    authors_id.push(data.id);
 });
-songs_state?.forEach((data)=>{
+data.songs?.forEach((data)=>{
     var strings_array: Array<string> = [];
-    data.extra_authors!.forEach((data)=>{strings_array.push(data.Id)});
-    songs_array.push({name: data.name!, index: data.index!, extra_authors: strings_array, main_author: main_author!.Id})});
-var for_mutation: AlbumnSendInterface = {songs: songs_array, name: name, main_author: main_author?.Id, authors: authors_id!};
-mutationFirst.mutate(for_mutation);
-
+    data.extra_authors!.forEach((data)=>{strings_array.push(data.id)});
+    songs_array.push({name: data.name!, index: data.index!, extra_authors: strings_array, main_author: main_author!.id})});
+var for_mutation: AlbumnSendInterface = {songs: songs_array, name: name, main_author: main_author?.id, extra_authors: authors_id!||[] };
+console.log(for_mutation,1314424234);
+//mutationFirst.mutate(for_mutation);
+await send(for_mutation);
+console.log(cover_img);
+console.log(songs_state[0])
 }
 
 
-    return(<form onSubmit={handleSubmit}>
+    return(<form onSubmit={handleSubmit(handleSub)}>
         <ContainerWrapper>
-        <input onChange={(e:React.ChangeEvent<HTMLInputElement>)=>(setnameState(e.target.value))} type="text"/>
+        <input {...register("name",{required: true})} type="text"/>
         </ContainerWrapper>
        <ContainerWrapper>
-        <SearchField value={main_author!} onChange={(author: AuthorData)=>{setMainAuthor(main_author)}} queryFn={async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname))} />
+        <Controller control={control} name={"main_author"} render={({ field: { onChange, value,  } })=>( <SearchField queryKey={"main_author_albumn"} value={value!} onChange={onChange} queryFn={async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname))} />)}/>
+       
        </ContainerWrapper>
-           <AuthorSearch value={mastate!} onChange={(data: Array<AuthorData>)=>{setMastate(data);}} />
+           <Controller control={control} name={"extra_authors"} render={({ field: { onChange,  value } })=>( <AuthorSearch queryKey={"extra_authors_albumn"} value={value!} urlArray={[]}  onChange={onChange}
+          /> )} />
+       <ContainerWrapper>
+          
+       <input {...register("cover_image",{validate:{ checkAvailability: validate}})}  style={{margin:"1vh"}} type="file"  />
+      
+       </ContainerWrapper>
         <ContainerWrapper>
-           <SongFieldsArray value={songs_state} onChange={(songs: Array<SongInterface>)=>{setSongsState(songs);}}/>
-           
-            <button  type="submit">submit</button>
+            <Controller name={"songs"} render={({ field: { onChange,  value } })=>( <SongFieldsArray value={value} onChange={onChange}/> )} />
+          
+            </ContainerWrapper> 
+        <ContainerWrapper>
+        <h1>Tags:</h1>
        </ContainerWrapper>
+       <ContainerWrapper>
+            <Controller name="tags"  render={({ field: { onChange,  value } })=>( <AuthorSearch value={value} onChange={onChange}  queryKey="tags" urlArray={["music", "find_author"]}/> )} />
+          
+       </ContainerWrapper>    
+            <button  type="submit">submit</button>
+     
+       
     </form>)
 }   

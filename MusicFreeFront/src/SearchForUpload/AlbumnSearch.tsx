@@ -13,14 +13,17 @@ interface AlbumnProps{
     author_id: string
 }
 
-const queryfn = async (authorname: string )=>(await axios.post("https://localhost:7190/music/find_author/"+authorname));
+const queryfn = async (authorname: string )=>(await axios.get("https://localhost:7190/music/find_albumn/"+authorname));
 
 //qClient.refetchQueries({queryKey: ["authorSearch"]})
 export function AlbumnSearch({value, onChange,  author_id}:AlbumnProps){
 
     const [findState, setfindState]= useState<string>("")
     const [is_choosen, setisChoosen] = useState<boolean>(false)
-const {data, status} = useQuery({queryKey: ["albumnSearch"],queryFn: async ()=>(await queryfn(findState)) });
+    
+const {data, status} = useQuery({queryKey: ["albumnSearch"],queryFn: async ()=>{
+    console.log(findState);
+    return await queryfn(findState);} });
     return(<div>
         <FieldComponent value={findState} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
     setfindState(event.target.value);}} find={()=>{}}/>
@@ -32,7 +35,7 @@ const {data, status} = useQuery({queryKey: ["albumnSearch"],queryFn: async ()=>(
         onChange(data);
     }}>
         <SearchResults value={findState} data={data} status={status} />
-        </Choose_AuthorContext> : <SearchResultComponent status="choosen" updateFn={(data:AuthorData)=>{setisChoosen(false)}} name={value.name} Id={value.Id}/>}
+        </Choose_AuthorContext> : <SearchResultComponent status="choosen" updateFn={(data:AuthorData)=>{setisChoosen(false)}} name={value.name!} Id={value.id}/>}
        
   </div>  );
 }

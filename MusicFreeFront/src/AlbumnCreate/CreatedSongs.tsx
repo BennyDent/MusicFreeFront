@@ -3,11 +3,12 @@ import { ContainerWrapper } from "../utils/ContainerWrapper";
 
 
 interface SongProps{
+    status: "edited"|"undo",
     song: SongInterface,
     onEdit: (Song: SongInterface)=>void
 }
 
-export function CreatedSongs({song, onEdit}:SongProps){
+export function CreatedSongs({song, status, onEdit}:SongProps){
 
 
     return(
@@ -19,7 +20,8 @@ export function CreatedSongs({song, onEdit}:SongProps){
                 {song.name}
             </ContainerWrapper>
             <ContainerWrapper>
-            <button onClick={()=>{onEdit(song)}}>Edit</button>
+            {status=="edited" ? <button onClick={()=>{onEdit(song)}}>Edit</button>: <button onClick={()=>{onEdit(song)}} > Undo</button>}
+            
             </ContainerWrapper>
         </div>
     );

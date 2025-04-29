@@ -3,11 +3,12 @@ import {useForm, Controller} from "react-hook-form";
 import { ContainerWrapper } from "../utils/ContainerWrapper";
 import { AuthorSearch } from "../SearchForUpload/AuthorSearch";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { SongInterface } from "./SongInterface";
 import { CreatedSongs } from "./CreatedSongs";
 import { SongField } from "./SongField";
+import { useSongField } from "./useSongField";
 interface SongFieldProps{
     value: Array<SongInterface>,
     onChange: (songs: Array<SongInterface>)=>void
@@ -18,33 +19,73 @@ interface SongFieldProps{
 
 export function SongFieldsArray({value, onChange}:SongFieldProps){
 
-const [status, setStatus] = useState<{status:"create"|"edit", song?: SongInterface  }>({status: "create"});
 function handleEdit(song: SongInterface){
-  
-    setStatus({status:"edit", song});}
+    setStatus("edit");
+    setsongState(song);
+    seteditedState(song.index!);
+}
+const [song, setsongState]= useState<SongInterface>({extra_authors: [], index: 1});
+const [edtedSong_index, seteditedState] = useState<number>(0);
+const [status, setStatus] = useState<"create"|"edit">( "create");
+const songState = useSongField();
 const handleDictionary={
-    edit: (song:SongInterface, )=>{
-        var new_value = value;
-        new_value.splice(song.index!, 1);   
-        new_value.splice(song.index!, 0, song);
+    edit: (new_song:SongInterface, )=>{
+        
+        var new_value = [ ...value.filter((part: SongInterface)=>part.index!=edtedSong_index), new_song];
+        
         onChange(new_value);
-        setStatus({status: "create"});
+        setStatus("create");
+        seteditedState(0);
+        setsongState({...song, ...new_song});
            
 },
 create:(song: SongInterface)=>{
-    var value_copy = value;
-    value_copy.push(song);
-    onChange(value_copy);}
-
+    var new_value = [...value, song];
+    onChange(new_value);
+    var new_object = {extra_authors: []}
+   setsongState({name: "", index: song.index!+1, extra_authors: [], file:new File([""], "")});
 }
 
+
+}
+useEffect(()=>{console.log(song,222)},[song]);
+
+const edit_button = {
+    edited: (song: SongInterface)=>{ setStatus("edit");
+        setsongState(song);
+        seteditedState(song.index!);},
+    undo: (song: SongInterface)=>{
+        setStatus("create");
+        setsongState({extra_authors: [], index: value.sort(sortFn)[value.length]?.index! +1});
+        seteditedState(0);
+    }
+}
+
+function sortFn(a: SongInterface, b: SongInterface){
+if(a.index==b.index){
+    return 0;
+}
+    if(a.index!<b.index!){
+    return -1;
+}
+else{
+    return +1;
+}
+}
+  console.log(value, status);
     return(
         <div>
             <ContainerWrapper>
-                {value.map((data: SongInterface)=>(<CreatedSongs song={data} onEdit={handleEdit}/>))}
+                {value.sort(sortFn).map((data: SongInterface, index)=>{
+                    var status: "edited"|"undo" = "edited";
+                    if(edtedSong_index== data.index){
+                        status="undo"
+                    }
+                   return( <CreatedSongs status={status} key={index} song={data} onEdit={edit_button[status]}/>);})}
             </ContainerWrapper>
             <ContainerWrapper>
-                <SongField onChange={handleDictionary[status.status]} song={status?.song}/>
+                <SongField onChange={handleDictionary[status]} {...song} />
+                
             </ContainerWrapper>
         </div>
     );

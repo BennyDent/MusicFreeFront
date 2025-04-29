@@ -1,7 +1,9 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
+import { createRootRoute, Link, Outlet,  } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import { Client, Provider, cacheExchange, fetchExchange, subscriptionExchange } from   "urql";
 import { createClient as createWSClient } from 'graphql-ws';
+import { PlayerTemplate } from '../PlayerComponent/PlayerTemplate';
+import { auth_check } from '../ts_files/auth_check';
 import {
   useQuery,
   useMutation,
@@ -9,6 +11,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import { Auth } from '../ts_files/auth';
 
 const queryClient = new QueryClient();
 
@@ -17,7 +20,7 @@ const wsClient = createWSClient({
 });
 
 const client = new Client({
-  url: 'https://localhost:7177/graphql',
+  url: 'https://localhost:7190/graphql',
   exchanges: [
     cacheExchange,
     fetchExchange,
@@ -35,20 +38,34 @@ const client = new Client({
   ],
 });
 
+async function  Preload(context:any ){
+console.log(context.context);
+const context1 =  context.context;
+context1.state = await context1.check()
+console.log(context1.state);
+return(context1);
+
+}
+
 
 
 export const Route = createRootRoute({
+
   component: () => (
+    <div style={{minHeight:"100vh", width:"100%"}}>
     <Provider value={client}>
-      <div className="p-2 flex gap-2">
+     
       <QueryClientProvider client={queryClient}>
+    
       <Outlet />
+    
+      
       <TanStackRouterDevtools />
       </QueryClientProvider>
-    </div>
-  </Provider>
+    
+  </Provider></div>
   ),
- 
+beforeLoad: Preload,
 })
 
 interface RouterContext{
