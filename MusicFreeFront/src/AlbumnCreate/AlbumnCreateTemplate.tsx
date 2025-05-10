@@ -1,13 +1,11 @@
 
 import { ContainerWrapper } from "../utils/ContainerWrapper";
-import { AuthorSearch } from "../SearchForUpload/AuthorSearch";
-import { AlbumnSearch } from "../SearchForUpload/AlbumnSearch";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import { useMutation } from "@tanstack/react-query";
 import React, {useState} from "react";
 import axios, { AxiosResponse } from "axios";
 import { SongInterface } from "./SongInterface";
-import { SearchField } from "../SearchForUpload/SearchField.";
+import { SearchField } from "../SearchForUpload/AuthorSearch";
 import { SongFieldsArray } from "./SongFieldsArray";
 import { SongField } from "./SongField";
 import { Controller, useForm, ValidateResult } from "react-hook-form";
@@ -17,8 +15,13 @@ interface AlbumnSendInterface{
 name: string,
     main_author?: string,
     extra_authors: Array<string>,
-    songs: Array<SendSongInterface>
+    songs: Array<SendSongInterface>,
+    tags: Array<String>,
+    genres: Array<String>
 }
+
+const controllers_rules= {required: true||"Choice is required!"};
+
 
 interface SendSongInterface{
 name: string,
@@ -51,8 +54,8 @@ interface CreateAlbumn{
     name: string,
     songs: Array<SongInterface>,
     cover_image: File|undefined,
-    tags: Array<AuthorData>|undefined,
-    genres: Array<AuthorData>|undefined,
+    tags: Array<String>|undefined,
+    genres: Array<String>|undefined,
 }
 
 function validate(file:File|undefined): ValidateResult {
@@ -122,10 +125,11 @@ data.extra_authors?.forEach((data:AuthorData)=>{
     authors_id.push(data.id);
 });
 data.songs?.forEach((data)=>{
+
     var strings_array: Array<string> = [];
     data.extra_authors!.forEach((data)=>{strings_array.push(data.id)});
     songs_array.push({name: data.name!, index: data.index!, extra_authors: strings_array, main_author: main_author!.id})});
-var for_mutation: AlbumnSendInterface = {songs: songs_array, name: name, main_author: main_author?.id, extra_authors: authors_id!||[] };
+var for_mutation: AlbumnSendInterface = {...data, tags: data.tags!,genres: data.tags!,  songs:songs_array, main_author: data.main_author!.name, extra_authors: data.extra_authors!= undefined ? data.extra_authors.map((data:AuthorData)=>data.name!): [],};
 console.log(for_mutation,1314424234);
 //mutationFirst.mutate(for_mutation);
 await send(for_mutation);
@@ -139,10 +143,10 @@ console.log(songs_state[0])
         <input {...register("name",{required: true})} type="text"/>
         </ContainerWrapper>
        <ContainerWrapper>
-        <Controller control={control} name={"main_author"} render={({ field: { onChange, value,  } })=>( <SearchField queryKey={"main_author_albumn"} value={value!} onChange={onChange} queryFn={async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname))} />)}/>
+        <Controller control={control} name={"main_author"} render={({ field: { onChange, value,  } })=>( <SearchField urlArray={[]} choice="single" queryKey={"main_author_albumn"} value={value!} onChange={onChange}  />)}/>
        
        </ContainerWrapper>
-           <Controller control={control} name={"extra_authors"} render={({ field: { onChange,  value } })=>( <AuthorSearch queryKey={"extra_authors_albumn"} value={value!} urlArray={[]}  onChange={onChange}
+           <Controller control={control}rules={controllers_rules} name={"extra_authors"} render={({ field: { onChange,  value } })=>( <SearchField  choice={"multiple"} queryKey={"extra_authors_albumn"} value={value!} urlArray={[]}  onChange={onChange}
           /> )} />
        <ContainerWrapper>
           
@@ -157,7 +161,7 @@ console.log(songs_state[0])
         <h1>Tags:</h1>
        </ContainerWrapper>
        <ContainerWrapper>
-            <Controller name="tags"  render={({ field: { onChange,  value } })=>( <AuthorSearch value={value} onChange={onChange}  queryKey="tags" urlArray={["music", "find_author"]}/> )} />
+            <Controller name="tags"  render={({ field: { onChange,  value } })=>( <SearchField choice="multiple" value={value} onChange={onChange}  queryKey="tags" urlArray={["music", "find_author"]}/> )} />
           
        </ContainerWrapper>    
             <button  type="submit">submit</button>

@@ -1,10 +1,10 @@
 import { ContainerWrapper } from "../utils/ContainerWrapper";
-import {Author_Input} from "./Choose_AutorContext";
 import {useContext} from "react";
 import { Container } from "react-bootstrap";
 import {Row} from "react-bootstrap";
 import {Col} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css';
+import { Author_Input } from "./Choose_AutorContext";
 export interface AuthorData{
     name?: string;
     id: string; 
@@ -13,20 +13,11 @@ export interface AuthorData{
 interface AuthorProps{
     status: "choosen"|"unchoosen"
     name: string;
-    Id: string;
-    updateFn?:(m: AuthorData)=>void
+    id?: string;
 }
  
-export function SearchResultComponent({name, Id, status,  updateFn}:AuthorProps){
-    var update:(m:AuthorData )=>void;
-    if(updateFn==undefined){
-       update = useContext(Author_Input); 
-       
-    }
-    else{
-        update= updateFn;
-    }
-    
+export function SearchResultComponent({name, id, status}:AuthorProps){
+    const update = useContext(Author_Input)
     return(
         <Container>
             <Row>
@@ -34,7 +25,7 @@ export function SearchResultComponent({name, Id, status,  updateFn}:AuthorProps)
                 {name}
                 </Col>
                 <Col xl={2}>
-                {status=="choosen" ? <button  onClick={(e)=>{update({name, id: Id})}}> + </button>: <button onClick={(e)=>{update({name, id: Id})}}> - </button>}
+                <button  onClick={(e)=>{update(id!=undefined ? {name, id} :name, status)}}>  {status=="choosen" ? "+": "-"}   </button>
                 </Col>
             </Row>
         </Container>
