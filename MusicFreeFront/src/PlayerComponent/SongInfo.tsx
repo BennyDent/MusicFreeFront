@@ -10,7 +10,7 @@ if(state==undefined){return(<div></div>);}
 return(
     <div>
        <ContainerWrapper>{state.name}</ContainerWrapper>
-       <ContainerWrapper><AuthorList data={state.authors}/></ContainerWrapper>
+       <ContainerWrapper><AuthorList main_author={state.main_author} extra_authors={state.extra_authors} /></ContainerWrapper>
     </div>
 )
 }

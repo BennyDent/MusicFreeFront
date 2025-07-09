@@ -26,18 +26,18 @@ export interface MusicianForChoice{
 
 
 interface author_search_props{
-    value: Array<AuthorData|string>|undefined|AuthorData,
-    onChange: (data: Array<AuthorData|string>|AuthorData|undefined
+    value: Array<AuthorData>|undefined|AuthorData,
+    onChange: (data: Array<AuthorData>|AuthorData|undefined
     )=>void,
     queryKey: string,
     urlArray: string[],
     choice: "single"|"multiple"
 }
 
-function MapSearchResults(data: AuthorData|string, status:"choosen"|"unchoosen", ){
+function MapSearchResults(data: AuthorData, status:"choosen"|"unchoosen", ){
 
 
-    return(<SearchResultComponent name={(typeof data=="object" ? data.name! : data)} id={( typeof data=="object" ? data.id: undefined)} status={status} />);
+    return(<SearchResultComponent name={data.name} id={( data.id)} status={status} />);
 }
 
 
@@ -52,9 +52,9 @@ export function SearchField({onChange, value, queryKey, urlArray, choice}:author
        return await queryfn([...urlArray, findState, page_index.toString()]).then(result=>{setHasMore(result.hasMore); return(result);})} });
     
 //qClient.refetchQueries({queryKey: ["authorSearch"]})
-function handleUnchoosen(data: AuthorData|string){
+function handleUnchoosen(data: AuthorData){
 
-    const filterFn = (m: AuthorData|string)=>{
+    const filterFn = (m: AuthorData)=>{
        if(JSON.stringify(m)==JSON.stringify(data))return true; else return false
        }
 
@@ -75,21 +75,21 @@ if(status=="pending"){return(<div></div>)}
     return(<div>
 
 
-        <FieldComponent value={findState} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-    setFindState(event.target.value);
+        <FieldComponent  status={queryKey=="tags"||queryKey=="genre" ? queryKey: "text"} value={findState} onChange={(new_value: string) => {
+    setFindState(new_value);
     
 }
     } find={()=>{
         q_client.resetQueries({queryKey: urlArray});
         q_client.refetchQueries({queryKey: urlArray});}}/>
 
-    <Author_Input.Provider  value={(data: AuthorData|string, status: "choosen"|"unchoosen"
+    <Author_Input.Provider  value={(data: AuthorData, status: "choosen"|"unchoosen"
     )=>{
 
-if(status=="unchoosen")onChange(Array.isArray(value) ? [...value, data ]: typeof data=="object" ? data: undefined );
+if(status=="unchoosen")onChange(Array.isArray(value) ? [...value, data ]: data);
 else onChange(Array.isArray(value) ? value.filter((a)=>(JSON.stringify(a)==JSON.stringify(data) ? false:true)): undefined );
     }}>
-        {choice=="multiple"&& Array.isArray(value) && <div>{value?.map((data:AuthorData|string)=>(MapSearchResults(data, "choosen")))}</div>}
+        {choice=="multiple"&& Array.isArray(value) && <div>{value?.map((data:AuthorData)=>(MapSearchResults(data, "choosen")))}</div>}
         {choice=="multiple"||(value!=undefined&&choice=="single")&& <InfiniteScroll loader={<div></div>} next={()=>{next([...urlArray, findState, page_index.toString()], q_client)}} dataLength={data!.page.length} hasMore={hasMore} 
         style={{overflowY: "scroll",maxHeight: "100px", maxWidth: "30%", paddingTop: "10px", paddingBottom:"10px" }}>  {data!.page.map((data, index)=>(MapSearchResults(data, "unchoosen") ) )}
         </InfiniteScroll> }

@@ -8,7 +8,7 @@ import { ContainerWrapper } from "../utils/ContainerWrapper";
 import { useSrcStore } from "../zustandStore/Store";
 import { AuthorList } from "../utils/AuthorsList";
 import { SongListcontext } from "../AlbumnPage/AlbumnPageContext";
-import {SongData} from "../zustandStore/Store";
+import { SongData } from "../utils/SongData";
 import React from "react";
 import { SongFetchInterface } from "../AlbumnPage/AlbumnPage";
 import {useMutation, } from "@tanstack/react-query";
@@ -16,18 +16,22 @@ import { urlmaker } from "../utils/urlmaker";
 import { config } from "../utils/AuthoriseHeader";
 import axios from "axios";
 import { ImageComponent } from "../utils/ImageComponent";
-import { NameAndAuthor } from "./SongandAuthor";
+import { NameAndAuthor } from "./NameandAuthor";
 import { useMenuFunction } from "./useMenuFunctions";
 import { ThreeDotComponent } from "./ThreeDotsButton";
 import { ListenedMutationFn } from "./ListenedMutationFunc";
 import { SongCustomDiv } from "./SongCustomDiv";
 import { AddToLikeButton } from "./AddToLikeButton";
+import { useSetSong } from "./useSongSet";
+
+
+export type song_status = "albumn"|"song_order"|  "search"
 
 interface AlbumnSongProps{
    
     song: SongData,
       index?: number|undefined,
-    status: "albumn"|  "search"
+    status: song_status
 }
 
 interface Three_Dots_Context{
@@ -38,9 +42,13 @@ export const three_dots_context = createContext<Three_Dots_Context>({}as Three_D
 
 
 
+
+
 export function SongComponent({ status, song, index}:AlbumnSongProps){
 
+const setSongs_list = useSrcStore((store)=>(store.setSongs_list));
 
+const setSong = useSetSong();
 const ref = useRef<HTMLDivElement>(null);
 const [is_static, setStatic] = useState<boolean>(false);
 const [hover, setHover] = useState<"hover"|"not_hover">("not_hover");
@@ -54,19 +62,17 @@ if(hover =='hover'){
 }
 },[is_static]);
 const object_array = useMenuFunction({albumnId: song.albumn_id});
-const srcsetter = useSrcStore((state)=>state.setSrc);
 
-let songsetter = useSrcStore((state)=>state.setSongWithListenList);
-let songs_setter = useSrcStore((state)=>state.setSong);
-let setIndex = useSrcStore((state)=>state.setCurrentIndex);
-let songslist:Array<SongData>= [];
-if(status=="albumn"){
+
+let songslist:Array<SongData>| undefined= undefined;
+
+  if(status=="albumn") {
     songslist = useContext(SongListcontext);
- 
-}
-else{
-    songslist = [song]; 
-}
+    setSongs_list(songslist);
+  } else if(status=="search"){
+    setSongs_list([song]);
+  }
+  
 
  // {status=="search" ?  <ImageComponent  src={song.src!} type="song"/>:<div>{[index!, 1].reduce((a,b)=> a+b,0).toString()}</div> }
 
@@ -83,12 +89,7 @@ if(song==undefined){
   
    </div>
    
-<NameAndAuthor  song={song} song_play={()=>{ if(status=="albumn"||status=="search"){
-        songsetter(songslist, index!);
-        
-    }else{
-        setIndex(index!);
-    }}}/>
+<NameAndAuthor  song={song} song_play={()=>{setSong(index!, songslist)}}/>
 
 
  <AddToLikeButton hover={hover} is_like={song.is_liked} status={status} songId={song.id}/>

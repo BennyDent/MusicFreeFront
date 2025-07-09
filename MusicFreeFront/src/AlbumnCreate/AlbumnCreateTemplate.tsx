@@ -54,8 +54,9 @@ interface CreateAlbumn{
     name: string,
     songs: Array<SongInterface>,
     cover_image: File|undefined,
-    tags: Array<String>|undefined,
-    genres: Array<String>|undefined,
+    tags: Array<AuthorData>,
+    genres: Array<AuthorData>,
+    type: 0|1|2
 }
 
 function validate(file:File|undefined): ValidateResult {
@@ -69,6 +70,10 @@ if(file.name=="png"||"jpeg"||"tiff"||"svg"){
 }
 
 }
+
+
+
+
 
  //{headers: {"Content-Type": 'multipart/form-data' }}
 export function AlbumnUploadTemplate(){
@@ -102,7 +107,7 @@ data.forEach((element: ResultInterface) => {
     const [name, setnameState] = useState<string>("");    
     const [songs_state, setSongsState] = useState<Array<SongInterface>>([]);
     const [cover_img, setCoverImg] = useState<File>()
-const {register, control, handleSubmit,} = useForm<CreateAlbumn>({defaultValues: {main_author: undefined, name: "", extra_authors: undefined, songs: [], cover_image: undefined, tags: undefined, genres: undefined }});
+const {register, control, handleSubmit,} = useForm<CreateAlbumn>({defaultValues: {main_author: undefined, type: 0, name: "", extra_authors: undefined, songs: [], cover_image: undefined, tags: undefined, genres: undefined }});
 
 const mutationAlbumnFirstFn = async (data: AlbumnSendInterface)=>(await axios.post("https://localhost:7190/music/create_albumn/", data).then((r:AxiosResponse)=>{console.log(r); return r;}))
    const send =  async(data:AlbumnSendInterface)=>(await mutationAlbumnFirstFn(data).then((r)=>{mutationSecondFunction(CreateFormData(r.data))})  ) ;
@@ -121,15 +126,18 @@ async function  handleSub(data:CreateAlbumn){
 
 var authors_id: Array<string>;
 let songs_array: Array<SendSongInterface>=[];
+let tags_strings: Array<String> = data.tags.map((a)=>(a.id));
+let genres_strings: Array<String> = data.genres.map((a)=>(a.id));
 data.extra_authors?.forEach((data:AuthorData)=>{
     authors_id.push(data.id);
 });
 data.songs?.forEach((data)=>{
-
+    
     var strings_array: Array<string> = [];
+    var extra_tags_strings = 
     data.extra_authors!.forEach((data)=>{strings_array.push(data.id)});
     songs_array.push({name: data.name!, index: data.index!, extra_authors: strings_array, main_author: main_author!.id})});
-var for_mutation: AlbumnSendInterface = {...data, tags: data.tags!,genres: data.tags!,  songs:songs_array, main_author: data.main_author!.name, extra_authors: data.extra_authors!= undefined ? data.extra_authors.map((data:AuthorData)=>data.name!): [],};
+var for_mutation: AlbumnSendInterface = {...data, tags: [...tags_strings],genres: data.genres.map((a)=>a.id),  songs:songs_array, main_author: data.main_author!.id, extra_authors: data.extra_authors!= undefined ? data.extra_authors.map((data:AuthorData)=>data.id!): [],};
 console.log(for_mutation,1314424234);
 //mutationFirst.mutate(for_mutation);
 await send(for_mutation);
@@ -146,24 +154,43 @@ console.log(songs_state[0])
         <Controller control={control} name={"main_author"} render={({ field: { onChange, value,  } })=>( <SearchField urlArray={[]} choice="single" queryKey={"main_author_albumn"} value={value!} onChange={onChange}  />)}/>
        
        </ContainerWrapper>
-           <Controller control={control}rules={controllers_rules} name={"extra_authors"} render={({ field: { onChange,  value } })=>( <SearchField  choice={"multiple"} queryKey={"extra_authors_albumn"} value={value!} urlArray={[]}  onChange={onChange}
+           <Controller control={control}rules={controllers_rules} name={"extra_authors"}
+            render={({ field: { onChange,  value } })=>( <SearchField  choice={"multiple"} queryKey={"extra_authors_albumn"} value={value!} urlArray={[]}  onChange={onChange}
           /> )} />
        <ContainerWrapper>
-          
+        
+        <ContainerWrapper>
+            <Controller name="type" control={control} rules={controllers_rules} 
+            render={({ field: { onChange,  value } })=>(
+                
+                <select value={value} onChange={onChange}>
+                <option>single</option>
+                <option value={0}>albumn</option>
+                <option value={1}>Ep</option>
+                <option value={2}>single</option>
+                </select>
+            )}/>
+        </ContainerWrapper>
+
+
        <input {...register("cover_image",{validate:{ checkAvailability: validate}})}  style={{margin:"1vh"}} type="file"  />
       
        </ContainerWrapper>
         <ContainerWrapper>
-            <Controller name={"songs"} render={({ field: { onChange,  value } })=>( <SongFieldsArray value={value} onChange={onChange}/> )} />
+            <Controller control={control} name={"songs"} render={({ field: { onChange,  value } })=>( <SongFieldsArray value={value} onChange={onChange}/> )} />
           
             </ContainerWrapper> 
         <ContainerWrapper>
         <h1>Tags:</h1>
        </ContainerWrapper>
        <ContainerWrapper>
-            <Controller name="tags"  render={({ field: { onChange,  value } })=>( <SearchField choice="multiple" value={value} onChange={onChange}  queryKey="tags" urlArray={["music", "find_author"]}/> )} />
+            <Controller control={control}  name="tags"  render={({ field: { onChange,  value } })=>( 
+            <SearchField choice="multiple" value={value} onChange={onChange}  queryKey="tags" urlArray={["music", "find_author"]}/> )} />
           
-       </ContainerWrapper>    
+       </ContainerWrapper>  
+
+
+
             <button  type="submit">submit</button>
      
        

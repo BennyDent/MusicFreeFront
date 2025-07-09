@@ -11,7 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SonguploadImport } from './routes/song_upload'
 import { Route as RegistrationImport } from './routes/registration'
 import { Route as MusicpagesImport } from './routes/music_pages'
 import { Route as LoginImport } from './routes/login'
@@ -26,11 +25,6 @@ import { Route as MusicpagesAuthorpageImport } from './routes/music_pages.author
 import { Route as MusicpagesAlbumnpageImport } from './routes/music_pages.albumn_page'
 
 // Create/Update Routes
-
-const SonguploadRoute = SonguploadImport.update({
-  path: '/song_upload',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const RegistrationRoute = RegistrationImport.update({
   path: '/registration',
@@ -145,13 +139,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegistrationImport
       parentRoute: typeof rootRoute
     }
-    '/song_upload': {
-      id: '/song_upload'
-      path: '/song_upload'
-      fullPath: '/song_upload'
-      preLoaderRoute: typeof SonguploadImport
-      parentRoute: typeof rootRoute
-    }
     '/music_pages/albumn_page': {
       id: '/music_pages/albumn_page'
       path: '/albumn_page'
@@ -206,7 +193,6 @@ export const routeTree = rootRoute.addChildren({
     MusicpagesSearchfullpageRoute,
   }),
   RegistrationRoute,
-  SonguploadRoute,
 })
 
 /* prettier-ignore-end */
@@ -223,8 +209,7 @@ export const routeTree = rootRoute.addChildren({
         "/email_send",
         "/login",
         "/music_pages",
-        "/registration",
-        "/song_upload"
+        "/registration"
       ]
     },
     "/albumn_create": {
@@ -254,9 +239,6 @@ export const routeTree = rootRoute.addChildren({
     },
     "/registration": {
       "filePath": "registration.tsx"
-    },
-    "/song_upload": {
-      "filePath": "song_upload.tsx"
     },
     "/music_pages/albumn_page": {
       "filePath": "music_pages.albumn_page.tsx",

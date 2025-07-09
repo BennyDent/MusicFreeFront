@@ -1,12 +1,13 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import axios from 'axios';
-import { SongData } from "../zustandStore/Store";
+import { SongData } from "../utils/SongData";
+import { song_status } from "./SongComponent";
 import {config} from "../utils/AuthoriseHeader"
 import { urlmaker } from "../utils/urlmaker";
 import style from './ThreeDotsButton.css';
 const SendLike = async (songId: string )=>(await axios.post(urlmaker.make(urlmaker.url,["likes", "add_like"]),{song_Id: songId}, config).then((resp)=>(resp.data)))
 
-export function AddToLikeButton({hover, is_like, songId, status}:{hover: "hover"|"not_hover", is_like: boolean, songId: string, status: "albumn"|"search"}){
+export function AddToLikeButton({hover, is_like, songId, status}:{hover: "hover"|"not_hover", is_like: boolean, songId: string, status: song_status}){
  console.log(is_like);
     const queryClient = useQueryClient();
     const mut = useMutation({mutationFn: SendLike, onSuccess: ({data})=>{

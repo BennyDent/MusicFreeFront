@@ -12,7 +12,7 @@ export function SongPlayer(){
 const src = useSrcStore((state)=>state.song);
 const player = useRef<H5AudioPlayer>(new H5AudioPlayer({src: "https://localhost:7190/music/get_song/"+src?.src!}));
 const setRef = useSrcStore((state)=>state.setref);
-setRef(player);
+
 console.log(src);
 
 return(<div style={{display: "flex", justifyContent: "space-evenly"}} >

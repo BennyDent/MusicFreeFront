@@ -12,8 +12,8 @@ export interface AuthorData{
 }
 interface AuthorProps{
     status: "choosen"|"unchoosen"
-    name: string;
-    id?: string;
+    name?: string;
+    id: string;
 }
  
 export function SearchResultComponent({name, id, status}:AuthorProps){
@@ -22,10 +22,10 @@ export function SearchResultComponent({name, id, status}:AuthorProps){
         <Container>
             <Row>
                 <Col xl={2}>
-                {name}
+                {name ==undefined ? id: name}
                 </Col>
                 <Col xl={2}>
-                <button  onClick={(e)=>{update(id!=undefined ? {name, id} :name, status)}}>  {status=="choosen" ? "+": "-"}   </button>
+                <button  onClick={(e)=>{update({name, id}, status)}}>  {status=="choosen" ? "+": "-"}   </button>
                 </Col>
             </Row>
         </Container>

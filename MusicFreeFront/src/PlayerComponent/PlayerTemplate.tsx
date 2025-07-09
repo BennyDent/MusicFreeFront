@@ -22,6 +22,7 @@ export function PlayerTemplate(){
         <div style={{minWidth: "50vh"}}><SongInfo/></div>
         <div><SongPlayer/></div>
         <div style={{minWidth: "30vh", margin: "5vh"}}><ButtonsComponent/></div>
+        <div className="audio-slider"></div>
        </div>
        
     );

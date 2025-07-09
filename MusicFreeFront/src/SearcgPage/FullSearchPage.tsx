@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearch } from "@tanstack/react-router";
-import { SongData } from "../zustandStore/Store";
+import { SongData } from "../utils/SongData";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import InfiniteScroll  from "react-infinite-scroll-component"
 import { map} from "./SongSearch";

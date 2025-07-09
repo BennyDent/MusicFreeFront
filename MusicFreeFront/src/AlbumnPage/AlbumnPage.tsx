@@ -114,7 +114,7 @@ function SongDataTrasform(array: Array<SongFetchInterface>, albumn_id: string, m
 var songs_sorted = array.sort((a:SongFetchInterface, b: SongFetchInterface)=>(a.albumn_index- b.albumn_index));
 songs_sorted.forEach((data: SongFetchInterface)=>{
     console.log(data);
-    songs_array.push({albumn_id: albumn_id, id: data.id, main_author: main_author, extra_authors: extra_authors , name:data.name, src: data.song_filename });
+   // songs_array.push({albumn_id: albumn_id, id: data.id, main_author: main_author, extra_authors: extra_authors , name:data.name, src: data.song_filename });
 });
 return songs_array;
 }

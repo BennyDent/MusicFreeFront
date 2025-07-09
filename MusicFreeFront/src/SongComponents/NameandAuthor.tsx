@@ -1,8 +1,8 @@
-import { SongData } from "../zustandStore/Store";
+import { SongData } from "../utils/SongData";
 import { AuthorList } from "../utils/AuthorsList";
 import { ListenedMutationFn } from "./ListenedMutationFunc";
 
-export function NameAndAuthor({ song_play, song}:{ song_play: ()=>void, song: SongData}){
+export function NameAndAuthor({ song_play, song,}:{ song_play: ()=>void, song: SongData, song_index?: number}){
 
 function handleClick(){
 ListenedMutationFn(song.id)
