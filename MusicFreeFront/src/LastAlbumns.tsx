@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 
 function ListAlbumns(){
 
-const {} = useQuery();
+const {} = useQuery({});
 
 
     return (<div>

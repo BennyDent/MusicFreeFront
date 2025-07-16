@@ -2,12 +2,12 @@
 
 
  export const auth_status: AuthStatus = {
-    status: 'loggedout',
+    status: 'logged_out',
     username: undefined,
  };
 
  export type AuthStatus = {
-    status: 'logged' | 'loggedout',
+    status: 'logged' | 'guest_user'|'logged_out',
     username? : string,
   
  }

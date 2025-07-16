@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearch } from "@tanstack/react-router";
+import { useRouteContext } from "@tanstack/react-router";
 import { SongData } from "../utils/SongData";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import InfiniteScroll  from "react-infinite-scroll-component"
@@ -18,7 +19,7 @@ interface SearchInterface{
 
 
 export function FullPageSearch(){
-
+const {status} = useRouteContext({from:'/music_pages/search'});
 const [coursor, setCoursor] =  useState<number>(-10);
  const [search_results, setSearchResults]= useState<any>([]);  
 const [hasMore, sethasMore] = useState<boolean>(true);
@@ -31,7 +32,7 @@ function Search(new_data: Array<any>){
     new_array.push(new_data);
     return new_array;
 }   
-const request = async (search: string)=>(axios.get(urlmaker.make(urlmaker.url,["find", type, search, coursor!.toString() ]), config)
+const request = async (search: string)=>(if()axios.get(urlmaker.make(urlmaker.url,["find", type, search, coursor!.toString() ]), config)
 .then((response:any)=>(response.data)))
 .then((data:any)=>{setSearchResults(Search(data));
     setCoursor(data.coursor);});

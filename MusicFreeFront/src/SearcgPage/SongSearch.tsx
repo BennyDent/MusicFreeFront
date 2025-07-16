@@ -2,13 +2,15 @@ import {useQuery} from "@tanstack/react-query"
 import {urlmaker} from "../utils/urlmaker";
 import axios from "axios";
 import { SongComponent } from "../SongComponents/SongComponent";
-import { SongData } from "../zustandStore/Store";
+import { SongData } from "../utils/SongData";
 import { AuthorComponent, AuthorFetch } from "../SongComponents/AuthorComponent";
 import { AlbumnComponent, AlbumnResult } from "../SongComponents/AlbumnComponent";
 import { config } from "../utils/AuthoriseHeader";
 import { useSearch } from "@tanstack/react-router";
 import { SearchPageParams } from "./SearchPageTemplate";
-const searchFunc = async ({queryKey}:{queryKey: string[]})=>(axios.get(urlmaker.make(urlmaker.url,queryKey),config));
+import { QueryFunctionContext } from "@tanstack/react-query";
+import { useState } from "react";
+const searchFunc = async ({queryKey}:{queryKey: string[]})=>(axios.get(urlmaker.make(urlmaker.url,queryKey),config).then((data)=>(data.data)));
 
  interface SearchPropsInterface{
     type: "song"|"albumn"|"author"
@@ -27,7 +29,18 @@ function AddSearch(type: "albumn"|"author", id: string){
 
 export function SearchComponent({ type}: SearchPropsInterface){
 const {search}:SearchPageParams = useSearch({from: "/music_pages/search"});
-const {data, isLoading, isError, isSuccess } = useQuery({queryKey: [ "search",type, search, "-5" ], queryFn: searchFunc});
+const [isactive, setActive] = useState<boolean>(true);
+const {data, isLoading, isError, isSuccess } = useQuery({queryKey: [ "search",type, search, "-5" ], queryFn: (context: QueryFunctionContext)=>{
+    try{
+        if(typeof context.queryKey == 'string'){
+           return  searchFunc(context.queryKey);
+        }
+      
+    }catch{
+
+        
+    };
+}, enabled: isactive});
 if(isLoading){
 return <HollowComponent/>
 }
