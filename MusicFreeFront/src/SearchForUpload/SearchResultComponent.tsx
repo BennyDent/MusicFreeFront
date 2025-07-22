@@ -15,7 +15,16 @@ interface AuthorProps{
     name?: string;
     id: string;
 }
+ const stringarray_to_authordata = (input: Array<string>|Array<AuthorData>)=>{
+ if(typeof input[0]=="string"){
+    var array = input.map(a=>({id: a}));
+     return array;  
+ }else{
+ return input;
+ }
+    
  
+ };
 export function SearchResultComponent({name, id, status}:AuthorProps){
     const update = useContext(Author_Input)
     return(

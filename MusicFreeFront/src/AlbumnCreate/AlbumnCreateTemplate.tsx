@@ -2,7 +2,7 @@
 import { ContainerWrapper } from "../utils/ContainerWrapper";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import { useMutation } from "@tanstack/react-query";
-import React, {useState} from "react";
+import React, {useState, PropsWithChildren} from "react";
 import axios, { AxiosResponse } from "axios";
 import { SongInterface } from "./SongInterface";
 import { SearchField } from "../SearchForUpload/AuthorSearch";
@@ -11,7 +11,7 @@ import { SongField } from "./SongField";
 import { ErrorMessage } from "@hookform/error-message"
 import * as dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Controller, useForm, ValidateResult } from "react-hook-form";
+import { Controller, FieldError, FieldErrors, useForm, ValidateResult } from "react-hook-form";
 import { ChangeEvent } from "react";
 const queryfn = async (authorname: string)=>(await axios.get("https://localhost:7190/music/find_author/"+authorname));
 interface AlbumnSendInterface{
@@ -78,7 +78,32 @@ if(file.name=="png"||"jpeg"||"tiff"||"svg"){
 
 }
 
+function ComponentWithName({name, children, form_name, errors}: PropsWithChildren<{name: string, form_name: string,errors:FieldErrors<CreateAlbumn> }>){
 
+return (
+    <div>
+        <ContainerWrapper>
+            {name+":"}
+        </ContainerWrapper>
+        <ContainerWrapper>
+            {children}
+        </ContainerWrapper>
+        <ErrorMessageComponent name={form_name} errors={errors}
+        />
+    </div>
+);
+
+}
+
+
+
+ function ErrorMessageComponent({name,  errors}:{name: string,  errors: FieldErrors<CreateAlbumn>}){
+
+    return <ErrorMessage name={name} errors={errors} render={({message, messages}:{ message: string | React.ReactElement, messages?: Object})=> (messages ?
+          Object.entries(messages).map(([type, message]) => (
+           <ContainerWrapper><p key={type}>{message}</p></ContainerWrapper> 
+    )):  <ContainerWrapper><p >{message}</p></ContainerWrapper>  )}/>;
+  }
 
 
 
@@ -131,9 +156,7 @@ const mutationAlbumnFirstFn = async (data: AlbumnSendInterface)=>(await axios.po
   } });
    
 
-  function ErrorMessage(){
-
-  }
+ 
 
 
 async function  handleSub(data:CreateAlbumn){
@@ -151,7 +174,7 @@ data.songs?.forEach((song_data)=>{
     
     data.extra_authors!.forEach((push_data)=>{strings_array.push(push_data.id)});
     songs_array.push({tags: song_data.tags.map(a=> a.id), genres: song_data.genres.map(a=> a.id), name: song_data.name!, index: song_data.index!, extra_authors: strings_array, main_author: data.main_author?.name! })});
-var for_mutation: AlbumnSendInterface = {...data, tags: [...tags_strings],genres: data.genres.map((a)=>a.id),  songs:songs_array, main_author: data.main_author!.id, extra_authors: data.extra_authors!= undefined ? data.extra_authors.map((data:AuthorData)=>data.id!): [],};
+var for_mutation: AlbumnSendInterface = {...data, date: date, tags: [...tags_strings],genres: data.genres.map((a)=>a.id),  songs:songs_array, main_author: data.main_author!.id, extra_authors: data.extra_authors!= undefined ? data.extra_authors.map((data:AuthorData)=>data.id!): [],};
 console.log(for_mutation,1314424234);
 //mutationFirst.mutate(for_mutation);
 await send(for_mutation);
@@ -163,19 +186,20 @@ if(value.length> 4) return true; else return false;
 }
 
     return(<form onSubmit={handleSubmit(handleSub)}>
-        <ContainerWrapper>
+       <ComponentWithName name="Name" errors={errors} form_name="name">
         <input {...register("name",{required: true})} type="text"/>
-        </ContainerWrapper>
-       <ContainerWrapper>
+       </ComponentWithName> 
+       <ComponentWithName  name="Author" errors={errors} form_name="main_author">
         <Controller control={control} name={"main_author"} render={({ field: { onChange, value,  } })=>( <SearchField urlArray={[]} choice="single" queryKey={"main_author_albumn"} value={value!} onChange={onChange}  />)}/>
-        
-       </ContainerWrapper>
+        </ComponentWithName>
+     <ComponentWithName name="Extra authors" errors={errors} form_name="extra_authors">
            <Controller control={control}rules={controllers_rules} name={"extra_authors"}
             render={({ field: { onChange,  value } })=>( <SearchField  choice={"multiple"} queryKey={"extra_authors_albumn"} value={value!} urlArray={[]}  onChange={onChange}
           /> )} />
-       <ContainerWrapper>
+      </ComponentWithName>
+      
         
-        <ContainerWrapper>
+       <ComponentWithName name="Albumn type" errors={errors} form_name="type">
             <Controller name="type" control={control} rules={controllers_rules} 
             render={({ field: { onChange,  value } })=>(
                 
@@ -186,16 +210,17 @@ if(value.length> 4) return true; else return false;
                 <option value={2}>single</option>
                 </select>
             )}/>
-        </ContainerWrapper>
+        </ComponentWithName>
 
-
+         <ComponentWithName name="Cover image" errors={errors} form_name="cover_image">      
        <input {...register("cover_image",{validate:{ checkAvailability: validate}, required: true})}  style={{margin:"1vh"}} type="file"  />
+      </ComponentWithName> 
+   
       
-       </ContainerWrapper>
-        <ContainerWrapper>
+        <ComponentWithName name="Songs" form_name="songs" >
             <Controller control={control} name={"songs"} render={({ field: { onChange,  value } })=>( <SongFieldsArray value={value} onChange={onChange}/> )} />
           
-            </ContainerWrapper> 
+            </ComponentWithName> 
         <ContainerWrapper>
         <h1>Tags:</h1>
        </ContainerWrapper>

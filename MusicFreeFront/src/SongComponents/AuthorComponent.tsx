@@ -1,14 +1,10 @@
-import {urlmaker} from "../utils/urlmaker"
+
 import { useNavigate } from "@tanstack/react-router";
 import { ButtonComponent } from "./PlayButton";
 import { ImageComponent } from "../utils/ImageComponent";
-export interface AuthorFetch{
-    id: string,
-    name: string,
-    src: string,
-}
+import { AuthorFetch } from "../utils/Authorfetch";
 
-export function AuthorComponent({data}:{data: AuthorFetch}){
+export function AuthorComponent({data, status}:{data: AuthorFetch, status: "search"|"reccomendation"}){
 const navigate = useNavigate();
 console.log(data.src);
     return(

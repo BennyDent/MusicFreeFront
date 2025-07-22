@@ -4,7 +4,7 @@ import { SearchInput } from "./SeatchInput";
 import {useState} from "react"
 import { SearchComponent } from "./SongSearch";
 import {useQuery} from "@tanstack/react-query";
-import {EmptySearch} from "./EmptySearch";
+import { EmptySearch } from "./SongSearch";
 
 export interface SearchPageParams{
     search: string,
@@ -19,8 +19,8 @@ const {search}:SearchPageParams = useSearch({from:"/music_pages/search"});
         <div style={{display:"flex", flexDirection: "column", }}>
       
         {search==""? <EmptySearch/>: <SearchPageResults 
-        authors={<SearchComponent  type="author"/>}
-        albumns={<SearchComponent  type="albumn"/>} songs={<SearchComponent  type="song"/>}/>}
+        authors={<SearchComponent url_strings={[""]} />}
+        albumns={<SearchComponent  url_strings={[""]} />} songs={<SearchComponent  url_strings={[""]}/>}/>}
         </div></div>
     );
 }

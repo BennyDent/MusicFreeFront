@@ -1,67 +1,111 @@
-import {useQuery} from "@tanstack/react-query"
+import {useQuery, useQueryClient} from "@tanstack/react-query"
 import {urlmaker} from "../utils/urlmaker";
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import { SongComponent } from "../SongComponents/SongComponent";
 import { SongData } from "../utils/SongData";
-import { AuthorComponent, AuthorFetch } from "../SongComponents/AuthorComponent";
-import { AlbumnComponent, AlbumnResult } from "../SongComponents/AlbumnComponent";
+import { AuthorFetch } from "../utils/Authorfetch";
+import { AuthorComponent, } from "../SongComponents/AuthorComponent";
+import { AlbumnComponent} from "../SongComponents/AlbumnComponent";
 import { config } from "../utils/AuthoriseHeader";
 import { useSearch } from "@tanstack/react-router";
 import { SearchPageParams } from "./SearchPageTemplate";
 import { QueryFunctionContext } from "@tanstack/react-query";
-import { useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { url_fn } from "../utils/urlmaker";
+import { useState, useEffect } from "react";
+import { AuthorData } from "../SearchForUpload/SearchResultComponent";
+import {Popover} from "@mui/material";
+import { AlbumnFetch } from "../utils/AlbumnFetch";
 const searchFunc = async ({queryKey}:{queryKey: string[]})=>(axios.get(urlmaker.make(urlmaker.url,queryKey),config).then((data)=>(data.data)));
 
  interface SearchPropsInterface{
-    type: "song"|"albumn"|"author"
+ 
+    url_strings: string[],
+   
 }
-export const map = {
-    song: (data:SongData,index: number)=>(
-        <SongComponent  song={data} status="search" key={index} />
-    ),
-    albumn: (data:AlbumnResult, index:number)=>(<div onClick={()=>{AddSearch("albumn", data.id)}}> <AlbumnComponent data={data}/></div>),
-    author: (data: AuthorFetch, index: number)=>(<div style={{width: "220px"}} onClick={()=>{AddSearch("author", data.id)}}><AuthorComponent data={data} key={index}/></div>)
+
+export type search_data_type = SongData|AlbumnFetch|AuthorFetch;
+function isSongData(object:any):object is SongData {
+return object.albumn_id != undefined;
 }
+function isAlbumnResult(object:any):object is AlbumnFetch{
+return object.songs != undefined
+}
+
+function isAuthorFetch(object:any){
+return object.songs == undefined && object.albumn_id != undefined;
+}
+
+
+export const map_function= (data:search_data_type, index: number )=>{
+
+    if(isSongData(data)){
+return  <SongComponent  song={data} status="search" key={index} />;
+    } else if(isAlbumnResult(data)){
+return <AlbumnComponent status="search" data={data}/>
+    } else if(isAuthorFetch(data)) {
+<AuthorComponent data={data} status="search"/>
+    }
+}
+
+
 
 function AddSearch(type: "albumn"|"author", id: string){
     axios.post(urlmaker.make(urlmaker.url, ["search", "add_last"]),{type:type,Id: id},config);
 }
 
-export function SearchComponent({ type}: SearchPropsInterface){
-const {search}:SearchPageParams = useSearch({from: "/music_pages/search"});
-const [isactive, setActive] = useState<boolean>(true);
-const {data, isLoading, isError, isSuccess } = useQuery({queryKey: [ "search",type, search, "-5" ], queryFn: (context: QueryFunctionContext)=>{
-    try{
-        if(typeof context.queryKey == 'string'){
-           return  searchFunc(context.queryKey);
-        }
-      
-    }catch{
+//["music", url_string, search]
 
-        
-    };
-}, enabled: isactive});
-if(isLoading){
-return <HollowComponent/>
-}
-if(isError){
-    return <HollowComponent/>
-}
-console.log(data);
+export async function SearchRequest(urls:Array<string>,){
+    return await axios.get(url_fn(urls)).then((r: AxiosResponse)=>(r.data))
+} 
 
-if(data?.data==""){
-    return(<div></div>);
+
+export  function SearchComponent({ url_strings,}: SearchPropsInterface){
+ const {search}:SearchPageParams = useSearch({from: "/music_pages/search"});
+
+
+async function  SetData(){
+var result = await SearchRequest(["music", ...url_strings, search]).then((r: AxiosResponse)=>(r.data))
+ setSearch_Data(result);
 }
+
+const [search_data, setSearch_Data] = useState<Array<search_data_type>>();
+
+useEffect( ()=>{  SetData()},[search]);
 
 return(
-    <div>
-        {data?.data.search.map(map[type])}
-    </div>
+    
+   <div>
+   {search_data?.map(map_function)}
+   </div>
+ 
 );
 
 }
 
-function HollowComponent(){
+export function EmptySearchComponent({open, anchor}:{ open: boolean,
+    anchor: Element,}){
+    const [data, setData] = useState<Array<search_data_type>>([]);
+    async function Set(){
+        var result = await SearchRequest([""]);
+        setData(result);
+    }
+    useEffect(()=>{Set()},[data]);
 
-    return(<div></div>)
+    if(data.length==0){
+        return <div></div>;
+    }
+    return(
+    <div>
+    <Popover anchorEl={anchor} open={open}>
+     {data.map(map_function)}
+    </Popover>
+    </div>
+)
+}
+
+
+export function EmptySearch({}){
+  return  <div></div>;
 }

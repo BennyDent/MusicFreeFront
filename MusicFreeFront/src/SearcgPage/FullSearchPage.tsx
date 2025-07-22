@@ -4,9 +4,10 @@ import { useRouteContext } from "@tanstack/react-router";
 import { SongData } from "../utils/SongData";
 import { AuthorData } from "../SearchForUpload/SearchResultComponent";
 import InfiniteScroll  from "react-infinite-scroll-component"
-import { map} from "./SongSearch";
+import { map_function } from "./SongSearch";
 import axios,{ AxiosInstance, AxiosPromise }  from "axios";
-
+import { search_data_type } from "./SongSearch";
+import { SearchRequest } from "./SongSearch";
 import { urlmaker } from "../utils/urlmaker";
 import { config } from "../utils/AuthoriseHeader";
 interface SearchInterface{
@@ -20,42 +21,18 @@ interface SearchInterface{
 
 export function FullPageSearch(){
 const {status} = useRouteContext({from:'/music_pages/search'});
-const [coursor, setCoursor] =  useState<number>(-10);
- const [search_results, setSearchResults]= useState<any>([]);  
-const [hasMore, sethasMore] = useState<boolean>(true);
+const {search, type}:SearchInterface = useSearch({from:"/music_pages/search_full_page"});
+const [isMore, setisMore] = useState<boolean>(true);
+const [page_index, setPage_index] = useState<number>(0);
+const [data, setDate] = useState<Array<search_data_type>>([]);
 
-useEffect(()=>{if(coursor==-1){
-    sethasMore(false);
-}},[coursor]);
-function Search(new_data: Array<any>){
-    var new_array = search_results;
-    new_array.push(new_data);
-    return new_array;
-}   
-const request = async (search: string)=>(if()axios.get(urlmaker.make(urlmaker.url,["find", type, search, coursor!.toString() ]), config)
-.then((response:any)=>(response.data)))
-.then((data:any)=>{setSearchResults(Search(data));
-    setCoursor(data.coursor);});
-const {search, type }:SearchInterface = useSearch({from:"/music_pages/search_full_page"});
 
-request(search);
-
-function next(){
-    request(search)
+async function onNext(){
+var result: Array<search_data_type> = await SearchRequest(["","", type, search, (page_index+1).toString() ]);
+setDate([...data, ...result]);
 }
- if(search_results.length==0){
-return(<div></div>)
- }
 
-
-
-if(type=="song"){
- return(<div style={{display: "flex", flexDirection:"column", }}>
-        <InfiniteScroll dataLength={search_results.length} next={next} hasMore={hasMore} loader={<div></div>}>{search_results.map(map[type])}</InfiniteScroll>
-    </div>);
-}else{
-    return(<div style={{display: "flex", flexDirection:"row", justifyContent:"space-evenly" }}>
-        <InfiniteScroll dataLength={search_results.length} next={next} hasMore={hasMore} loader={<div></div>}>{search_results.map(map[type])} </InfiniteScroll>
-    </div>);
-}
+return(<div><InfiniteScroll next={()=>{onNext}} loader={<div></div>} dataLength={data.length} hasMore={isMore}>
+    {data.map(map_function)}
+    </InfiniteScroll></div>);
 }

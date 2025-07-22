@@ -4,20 +4,13 @@ import axios from "axios";
 import { urlmaker } from "../utils/urlmaker";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { SongData } from "../zustandStore/Store";
+import { SongData } from "../utils/SongData";
 import { ButtonComponent } from "./PlayButton";
 import { ImageComponent } from "../utils/ImageComponent";
 import { AuthorList } from "../utils/AuthorsList";
 import { ListenedMutationFn } from "./ListenedMutationFunc";
-export interface AlbumnResult{
-    id: string,
-    name: string,
-    main_author: AuthorData,
-    extra_authors: Array<AuthorData>,
-    cover_src: string,
-    songs: Array<SongData>
-}
-export function AlbumnComponent({data }:{data: AlbumnResult}){
+import { AlbumnFetch } from "../utils/AlbumnFetch";
+export function AlbumnComponent({data, status }:{data: AlbumnFetch, status: "search"|"recommendation"}){
 const navigate = useNavigate();
 console.log(data);
 

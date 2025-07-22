@@ -10,13 +10,15 @@ import { SongField } from "./SongField";
 import { useSongField } from "./useSongField";
 interface SongFieldProps{
     value: Array<SongInterface>,
-    onChange: (songs: Array<SongInterface>)=>void
+    onChange: (songs: Array<SongInterface>)=>void,
+    parent_tags: Array<AuthorData>,
+    parent_genres: Array<AuthorData>
 }
 
 
 
 
-export function SongFieldsArray({value, onChange}:SongFieldProps){
+export function SongFieldsArray({value, onChange, parent_genres, parent_tags}:SongFieldProps){
 
 function handleEdit(song: SongInterface){
     setStatus("edit");
@@ -83,7 +85,7 @@ else{
                    return( <CreatedSongs status={status} key={index} song={data} onEdit={edit_button[status]}/>);})}
             </ContainerWrapper>
             <ContainerWrapper>
-                <SongField onChange={handleDictionary[status]} {...song} />
+                <SongField onChange={handleDictionary[status]} {...song} parent_genres={parent_genres} parent_tags={parent_tags} />
                 
             </ContainerWrapper>
         </div>
