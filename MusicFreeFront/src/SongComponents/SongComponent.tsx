@@ -25,7 +25,7 @@ import { AddToLikeButton } from "./AddToLikeButton";
 import { useSetSong } from "./useSongSet";
 
 
-export type song_status = "albumn"|"song_order"|  "search"
+export type song_status = "albumn"|"song_order"| "search"
 
 interface AlbumnSongProps{
    

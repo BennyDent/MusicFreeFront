@@ -57,22 +57,22 @@ function AddSearch(type: "albumn"|"author", id: string){
 //["music", url_string, search]
 
 export async function SearchRequest(urls:Array<string>,){
-    return await axios.get(url_fn(urls)).then((r: AxiosResponse)=>(r.data))
+    return await axios.get(url_fn(urls), config).then((r: AxiosResponse)=>(r.data))
 } 
 
-
+export async function  SetStateData(setData:  React.Dispatch<React.SetStateAction<any[]>>, url_strings:string[]){
+var result = await SearchRequest([ ...url_strings]).then((r: AxiosResponse)=>(r.data))
+ setData(result);
+}
 export  function SearchComponent({ url_strings,}: SearchPropsInterface){
  const {search}:SearchPageParams = useSearch({from: "/music_pages/search"});
 
 
-async function  SetData(){
-var result = await SearchRequest(["music", ...url_strings, search]).then((r: AxiosResponse)=>(r.data))
- setSearch_Data(result);
-}
 
-const [search_data, setSearch_Data] = useState<Array<search_data_type>>();
 
-useEffect( ()=>{  SetData()},[search]);
+const [search_data, setSearch_Data] = useState<Array<search_data_type>>([]);
+
+useEffect( ()=>{  SetStateData(setSearch_Data, [...url_strings, search])},[search]);
 
 return(
     

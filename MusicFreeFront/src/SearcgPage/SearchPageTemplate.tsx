@@ -5,7 +5,7 @@ import {useState} from "react"
 import { SearchComponent } from "./SongSearch";
 import {useQuery} from "@tanstack/react-query";
 import { EmptySearch } from "./SongSearch";
-
+import { SetStateData } from "./SongSearch";
 export interface SearchPageParams{
     search: string,
 }
@@ -24,6 +24,7 @@ const {search}:SearchPageParams = useSearch({from:"/music_pages/search"});
         </div></div>
     );
 }
+
 
 //      {albumns}  {authors}  
 function SearchPageResults({ songs, albumns, authors }:{songs: React.ReactNode, albumns: React.ReactNode, authors:React.ReactNode }){

@@ -13,7 +13,6 @@ export interface PlaylistType{
 }
 
 export interface SrcStore{
-   
     song_order: "on"|"off",
     ref:MutableRefObject<HTMLAudioElement> | undefined ,
     setref: (ref:MutableRefObject<HTMLAudioElement> | undefined)=>void,
