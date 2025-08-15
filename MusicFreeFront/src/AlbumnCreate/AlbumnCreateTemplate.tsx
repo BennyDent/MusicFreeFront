@@ -125,6 +125,7 @@ const ErrorText = ({children}:PropsWithChildren)=>(<p style={{color: "red"}}>{ch
 
  //{headers: {"Content-Type": 'multipart/form-data' }}
 export function AlbumnUploadTemplate(){
+<<<<<<< Updated upstream
      var validate_cover = useValidate(["jpg","svg","jpeg"]);
 
 
@@ -134,6 +135,13 @@ const tags_watch = useWatch({name:"tags"});
 const genres_watch = useWatch({name: "genres"});
     const [general_error, setGeneral_error] = useState<string>("");
    function CreateFormData(data: CreateAlbumn):FormData{
+=======
+const {register, control, handleSubmit, formState:{errors}, setError, getValues, reset} = useForm<CreateAlbumn>({defaultValues: {main_author: undefined, type: 0, name: "", 
+    extra_authors: undefined, songs: [], cover_image: undefined, tags: undefined, genres: undefined, release_date: new Date() }});
+    
+    const [cover_image, setCover_image_] = useState<File>();
+   function CreateFormData(data: any):FormData{
+>>>>>>> Stashed changes
 var formData = new FormData();
 console.log(data);
 
