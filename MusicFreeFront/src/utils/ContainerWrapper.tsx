@@ -6,12 +6,16 @@ import { PropsWithChildren } from "react";
 export function ContainerWrapper(props: PropsWithChildren){
 
     return(
-        <Container fluid>
-            <Row>
-                <Col>
+        <div style={{display: "flex", flexDirection:"row"}}>
       {props.children}          
-                </Col>
-            </Row>
-        </Container>
+              </div>  
     );
+}
+
+
+export function  ColumnWrapper(props: PropsWithChildren){
+
+    return(<div style={{display: "flex", flexDirection:"column"}}>
+      {props.children}          
+              </div>  );
 }

@@ -7,6 +7,7 @@ import { url_fn } from "../utils/urlmaker";
 import { send_header } from "../utils/JsonHeader";
 import { ComponentWithName } from "../AlbumnCreate/AlbumnCreateTemplate";
 import { ErrorMessageComponent } from "../AlbumnCreate/AlbumnCreateTemplate";
+import { fetchPost, fectchFormDataPost } from "../utils/FetchMethods";
 interface AuthorInput{
     name: string
 }
@@ -25,11 +26,11 @@ interface MusicianInput{
 
 export function MusicianCreate(){
 const mutateFn = async (data: {name: string})=>{
-    return await axios.post(url_fn([]), JSON.stringify(data), send_header);
+    return await fetchPost(["music", "create", "author"],data)
 }
-const second_mutation_func = async (formData: FormData)=>(await axios.post(url_fn([]) , formData));
+const second_mutation_func = async (formData: FormData)=>(await fectchFormDataPost(["music", "upload", "author"], formData));
 
-const third_mutation_func = async (data: object)=>(await axios.post(url_fn([]), JSON.stringify(data), send_header))
+const third_mutation_func = async (data: object)=>(await fetchPost(["music","upload", "id", "author"], data, ))
 
 
 function CreateFormdata(file: File){
@@ -45,9 +46,9 @@ const {register, handleSubmit, formState:{errors}, setError, getValues, reset} =
 
 try{
 
-     mutateFn({name: data.name}).then(async (resp:AxiosResponse)=>{if(resp.status==200) return await second_mutation_func(CreateFormdata(data.file!))
-        .then(async(res: AxiosResponse)=>{if(res.status==200) return await third_mutation_func({[resp.data]: res.data});else throw "Something wrong!"}); 
-        else throw "Something Wrong!"}).then((r:AxiosResponse)=>{if(r.status==200)reset();});
+     mutateFn({name: data.name}).then(async (resp: Response)=>{if(resp.status==200){var text = await resp.text(); return await second_mutation_func(CreateFormdata(data.file!))
+        .then(async(res:Response )=>{if(res.status==200) {var data= res.text(); return await third_mutation_func({ [text]: data});}else throw "Something wrong!"}); 
+      } else throw "Something Wrong!"}).then((r)=>{if(r.status==200)reset();});
 }catch(e:any){
     setError("root", {message: e.message});
 }
@@ -61,7 +62,7 @@ return(<div >
 <input {...register("name", {required:"Name is required!"})} type="text"/>
 </ComponentWithName>
 <ComponentWithName name="Profile picture" form_name="file" errors={errors}>
-    <input {...register("file", {required:"Profile picture is required!"})}/>
+    <input type="file" {...register("file", {required:"Profile picture is required!"})}/>
 </ComponentWithName>
 <ErrorMessageComponent name="root"  errors={errors}/>
 <ContainerWrapper>

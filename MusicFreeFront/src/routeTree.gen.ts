@@ -14,9 +14,9 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as RegistrationImport } from './routes/registration'
 import { Route as MusicpagesImport } from './routes/music_pages'
 import { Route as LoginImport } from './routes/login'
+import { Route as ExtracreationpagesImport } from './routes/extra_creation_pages'
 import { Route as EmailsendImport } from './routes/email_send'
 import { Route as EmailchangeImport } from './routes/email_change'
-import { Route as AuthorcreateImport } from './routes/author_create'
 import { Route as AlbumncreateImport } from './routes/albumn_create'
 import { Route as MusicpagesSearchfullpageImport } from './routes/music_pages.search_full_page'
 import { Route as MusicpagesSearchImport } from './routes/music_pages.search'
@@ -41,6 +41,11 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const ExtracreationpagesRoute = ExtracreationpagesImport.update({
+  path: '/extra_creation_pages',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const EmailsendRoute = EmailsendImport.update({
   path: '/email_send',
   getParentRoute: () => rootRoute,
@@ -48,11 +53,6 @@ const EmailsendRoute = EmailsendImport.update({
 
 const EmailchangeRoute = EmailchangeImport.update({
   path: '/email_change',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const AuthorcreateRoute = AuthorcreateImport.update({
-  path: '/author_create',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -97,13 +97,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AlbumncreateImport
       parentRoute: typeof rootRoute
     }
-    '/author_create': {
-      id: '/author_create'
-      path: '/author_create'
-      fullPath: '/author_create'
-      preLoaderRoute: typeof AuthorcreateImport
-      parentRoute: typeof rootRoute
-    }
     '/email_change': {
       id: '/email_change'
       path: '/email_change'
@@ -116,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/email_send'
       fullPath: '/email_send'
       preLoaderRoute: typeof EmailsendImport
+      parentRoute: typeof rootRoute
+    }
+    '/extra_creation_pages': {
+      id: '/extra_creation_pages'
+      path: '/extra_creation_pages'
+      fullPath: '/extra_creation_pages'
+      preLoaderRoute: typeof ExtracreationpagesImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -181,9 +181,9 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren({
   AlbumncreateRoute,
-  AuthorcreateRoute,
   EmailchangeRoute,
   EmailsendRoute,
+  ExtracreationpagesRoute,
   LoginRoute,
   MusicpagesRoute: MusicpagesRoute.addChildren({
     MusicpagesAlbumnpageRoute,
@@ -204,9 +204,9 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/albumn_create",
-        "/author_create",
         "/email_change",
         "/email_send",
+        "/extra_creation_pages",
         "/login",
         "/music_pages",
         "/registration"
@@ -215,14 +215,14 @@ export const routeTree = rootRoute.addChildren({
     "/albumn_create": {
       "filePath": "albumn_create.tsx"
     },
-    "/author_create": {
-      "filePath": "author_create.tsx"
-    },
     "/email_change": {
       "filePath": "email_change.tsx"
     },
     "/email_send": {
       "filePath": "email_send.tsx"
+    },
+    "/extra_creation_pages": {
+      "filePath": "extra_creation_pages.tsx"
     },
     "/login": {
       "filePath": "login.tsx"

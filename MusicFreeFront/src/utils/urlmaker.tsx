@@ -1,13 +1,13 @@
 
 
 interface Url_Make_Interface{
-    url: "https://localhost:7190/",
+    url: string,
     make:(url:string, strings:Array<string>)=> string,
 }
 
 
 export const urlmaker = {
-    url: "https://localhost:7190/",
+    url: "http://localhost:8000/",
     make: (url:string, strings:Array<string>)=>{
         var result = url;
         strings.forEach((sting:string)=>{result=result+sting+"/"})

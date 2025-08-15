@@ -8,5 +8,7 @@ export default defineConfig({
   plugins: [vue(),
     TanStackRouterVite(),
     viteReact(),
-  ],
-})
+  ],server: {port: 3000}
+},
+
+)

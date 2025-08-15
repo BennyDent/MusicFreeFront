@@ -8,9 +8,9 @@ interface TagsCreation{
     name: string
 }
 
-function TagsGenresCreate({status}:{status: "tags"|"genres"}){
+export function TagsGenresCreate({status}:{status: "tags"|"genres"}){
 
-    const mutation_function = async (data:{is_tag: Boolean,name: string})=>(await axios.post(url_fn([status]), JSON.stringify(data), send_header))
+    const mutation_function = async (data:{is_tag: Boolean,name: string})=>(await  fetch(url_fn([status]), JSON.stringify(data), send_header))
 const {register, handleSubmit, formState:{errors}, setError, getValues, reset} = useForm<TagsCreation>({defaultValues:{name: ""}})
 
 
@@ -23,10 +23,15 @@ await mutation_function({is_tag: is_tag, name: data.name}).then((resp: AxiosResp
 }
     return(
 
-        <div>
+        <div style={{display: "flex", flexDirection: "column", marginTop:"10%", marginBottom:"10%", justifyContent: "space-between", alignItems: "center",}}>
             <form onSubmit={handleSubmit(handleSub)}>
-<ComponentWithName name="Name" form_name="name" errors={errors}></ComponentWithName>
+<ComponentWithName name="Name" form_name="name" errors={errors}>
+
+    <input type="text" {...register("name", {required:"Name is required!"})}/>
+</ComponentWithName>
             <ErrorMessageComponent name="root" errors={errors}/>
+
+            <button type="submit"> Submit</button>
             </form>
         </div>
     );

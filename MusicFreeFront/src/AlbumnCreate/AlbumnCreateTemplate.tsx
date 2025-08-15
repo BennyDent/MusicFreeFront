@@ -68,17 +68,25 @@ interface CreateAlbumn{
     release_date: Date
 }
 
-function validate(file:File|undefined): ValidateResult {
+export function useValidate(validate_strings: Array<string>){
+
+const validate = (file: File|undefined)=>{
 if(file==undefined){
 return false||"Cover image is required!"
 }
-if(file.name=="png"||"jpeg"||"tiff"||"svg"){
-    return true;
-}else{
-    return false||"Wrong format or cover image!"
+var false_index = 0
+for (let validate_string of validate_strings){
+if(validate_string== file.name){
+    false_index +1;
 }
+}
+if(false_index==validate_strings.length)return false; else return true;
+}
+return validate;
 
 }
+
+
 
 export function ComponentWithName({name, children, form_name, errors}: PropsWithChildren<{name: string,  form_name: string, errors: FieldErrors<any> }>){
 
@@ -117,7 +125,10 @@ const ErrorText = ({children}:PropsWithChildren)=>(<p style={{color: "red"}}>{ch
 
  //{headers: {"Content-Type": 'multipart/form-data' }}
 export function AlbumnUploadTemplate(){
-const {register, control, handleSubmit, formState:{errors}, setError, getValues, reset} = useForm<CreateAlbumn>({defaultValues: {main_author: undefined, type: 0, name: "", 
+     var validate_cover = useValidate(["jpg","svg","jpeg"]);
+
+
+    const {register, control, handleSubmit, formState:{errors}, setError, getValues, reset} = useForm<CreateAlbumn>({defaultValues: {main_author: undefined, type: 0, name: "", 
     extra_authors: undefined, songs: [], cover_image: undefined, tags: undefined, genres: undefined, release_date: new Date() }});
 const tags_watch = useWatch({name:"tags"});
 const genres_watch = useWatch({name: "genres"});
@@ -236,7 +247,7 @@ if(value.length> 4) return true; else return false;
         </ComponentWithName>
 
          <ComponentWithName name="Cover image" errors={errors} form_name="cover_image">      
-       <input {...register("cover_image",{validate:{ checkAvailability: validate}, required: true})}  style={{margin:"1vh"}} type="file"  />
+       <input {...register("cover_image",{validate:{ checkAvailability: validate_cover}, required: true})}  style={{margin:"1vh"}} type="file"  />
       </ComponentWithName> 
    
       

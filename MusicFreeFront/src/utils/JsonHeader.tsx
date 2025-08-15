@@ -1,9 +1,9 @@
 import { config } from "./AuthoriseHeader"
 
 
-export const send_header =  { headers: {
-    'Content-type': 'application-json'
-}
+export const send_header =  { 
+    'Content-type': 'application-json',
+
 
 }
 
