@@ -9,7 +9,7 @@ import { SearchField } from "../SearchForUpload/AuthorSearch";
 interface SongFieldProps{
     name?: string,
     index?: number,
-    extra_authors: Array<AuthorData>,
+    extra_authors?: Array<AuthorData>,
     file?: File,
     parent_tags: Array<AuthorData>,
     parent_genres: Array<AuthorData>,
@@ -21,7 +21,7 @@ export function SongField({name, index, extra_authors, file, onChange, parent_ge
 const [key, setKey] = useState("sss")
 const [nameState, setnameState] = useState<string|undefined>(name);
 const [indexState, setindexState] = useState<number|undefined>(index);
-const [extra_authorsState, setAuthorsState] = useState<Array<AuthorData>>(extra_authors);
+const [extra_authorsState, setAuthorsState] = useState<Array<AuthorData>>(extra_authors==undefined ? []:extra_authors);
 const [ fileState, setFileState] = useState<File|undefined>(file);
 const [tags, settags] = useState<Array<AuthorData>>([...parent_tags]);
 const [genres, setgenres] = useState<Array<AuthorData>>([...parent_genres]);
@@ -47,7 +47,7 @@ useEffect(()=>{
     console.log(name);
     setnameState(name);},[name]);
 useEffect(()=>{setindexState(index)}, [index]);
-useEffect(()=>{setAuthorsState(extra_authors)}, [extra_authors]);
+useEffect(()=>{if(extra_authors!=undefined){setAuthorsState(extra_authors)}}, [extra_authors]);
 useEffect(()=>{
     console.log(16);
     if (file?.webkitRelativePath==""){

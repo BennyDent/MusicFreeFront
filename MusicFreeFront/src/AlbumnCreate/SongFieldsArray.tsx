@@ -8,6 +8,7 @@ import { SongInterface } from "./SongInterface";
 import { CreatedSongs } from "./CreatedSongs";
 import { SongField } from "./SongField";
 import { useSongField } from "./useSongField";
+import { useValidate } from "./AlbumnCreateTemplate"; 
 interface SongFieldProps{
     value: Array<SongInterface>,
     onChange: (songs: Array<SongInterface>)=>void,
@@ -20,12 +21,14 @@ interface SongFieldProps{
 
 export function SongFieldsArray({value, onChange, parent_genres, parent_tags}:SongFieldProps){
 
+const file_validate = useValidate(["wav"]);
+
 function handleEdit(song: SongInterface){
     setStatus("edit");
     setsongState(song);
     seteditedState(song.index!);
 }
-const [song, setsongState]= useState<SongInterface>({extra_authors: [], index: 1});
+const [song, setsongState]= useState<SongInterface|undefined>();
 const [edtedSong_index, seteditedState] = useState<number>(0);
 const [status, setStatus] = useState<"create"|"edit">( "create");
 const songState = useSongField();
@@ -44,7 +47,7 @@ create:(song: SongInterface)=>{
     var new_value = [...value, song];
     onChange(new_value);
     var new_object = {extra_authors: []}
-   setsongState({name: "", index: song.index!+1, extra_authors: [], file:new File([""], "")});
+   setsongState({name: "", index: song.index!+1, extra_authors: [], file:new File([""], "filename"),tags:song.tags, genres: song.genres});
 }
 
 
@@ -57,7 +60,7 @@ const edit_button = {
         seteditedState(song.index!);},
     undo: (song: SongInterface)=>{
         setStatus("create");
-        setsongState({extra_authors: [], index: value.sort(sortFn)[value.length]?.index! +1});
+        setsongState({extra_authors: [], index: value.sort(sortFn)[value.length]?.index! +1, tags: song.tags, genres: song.genres});
         seteditedState(0);
     }
 }
